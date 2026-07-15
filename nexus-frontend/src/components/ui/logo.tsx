@@ -37,19 +37,12 @@ export function AuraLogo({ className, size = "md" }: LogoProps) {
     sm: "w-8 h-8",
     md: "w-16 h-16",
     lg: "w-32 h-32",
-    xl: "w-64 h-64",
-  };
-
-  const ringSizes = {
-    sm: [24, 32],
-    md: [48, 64],
-    lg: [96, 128],
-    xl: [192, 256],
+    xl: "w-full max-w-[450px] aspect-square",
   };
 
   const containerSize = sizeMap[size];
-  const [innerRing, outerRing] = ringSizes[size];
 
+  // Using a container-relative sizing approach so we can just use 100% inside.
   return (
     <motion.div
       ref={containerRef}
@@ -59,102 +52,152 @@ export function AuraLogo({ className, size = "md" }: LogoProps) {
       whileHover={{ scale: 1.05 }}
       transition={{ type: "spring", stiffness: 400, damping: 10 }}
     >
-      {/* Soft Bloom Background (Lavender & Electric Blue) */}
+      {/* Background Blooms */}
       <motion.div 
-        className="absolute inset-0 rounded-full bg-indigo-500/10 blur-xl"
-        animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.7, 0.4] }}
+        className="absolute inset-0 rounded-full bg-indigo-500/10 blur-[40px] md:blur-[80px]"
+        animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div 
-        className="absolute inset-0 rounded-full bg-blue-500/10 blur-lg"
+        className="absolute inset-0 rounded-full bg-blue-500/10 blur-[30px] md:blur-[60px]"
         animate={{ scale: [1.2, 1, 1.2], opacity: [0.3, 0.6, 0.3] }}
         transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
 
-      {/* Orbit Rings (Cyan Light Trails) */}
+      {/* Hexagon Layer (Outer) */}
       <motion.div
-        className="absolute rounded-full border border-white/10 border-t-cyan-400/50 border-b-indigo-500/30"
-        style={{ width: innerRing, height: innerRing, x: useTransform(springX, (x) => x * -5), y: useTransform(springY, (y) => y * -5) }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-      />
-      
-      <motion.div
-        className="absolute rounded-full border border-white/5 border-l-blue-500/40 border-r-purple-500/40"
-        style={{ width: outerRing, height: outerRing, x: useTransform(springX, (x) => x * -10), y: useTransform(springY, (y) => y * -10) }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-      />
-
-      {/* Orbital Nodes (Electric Blue, Cyan, Lavender) */}
-      {[0, 60, 120, 180, 240, 300].map((angle, index) => {
-        const colors = [
-          "bg-blue-500", "bg-cyan-400", "bg-indigo-400", 
-          "bg-blue-400", "bg-purple-400", "bg-cyan-300"
-        ];
-        return (
-          <motion.div
-            key={angle}
-            className="absolute origin-center"
-            style={{ 
-              width: outerRing, height: outerRing,
-              x: useTransform(springX, (x) => x * -10), 
-              y: useTransform(springY, (y) => y * -10)
-            }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 16, repeat: Infinity, ease: "linear", delay: index * -2.66 }}
-          >
-            <div 
-              className={cn("absolute -top-1 left-1/2 w-[6px] h-[6px] rounded-full shadow-[0_0_10px_rgba(255,255,255,0.9)]", colors[index])}
-              style={{ transform: 'translateX(-50%)' }}
-            />
-          </motion.div>
-        );
-      })}
-
-      {/* Core Sphere (Glass and Purple/Blue Gradient) */}
-      <motion.div
-        className="relative z-10 w-[65%] h-[65%] rounded-full overflow-hidden glass shadow-[0_0_35px_rgba(99,102,241,0.4)]"
-        style={{ x: useTransform(springX, (x) => x * 15), y: useTransform(springY, (y) => y * 15) }}
-        animate={{ y: [-2, 2, -2] }}
-        transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+        className="absolute inset-0 flex items-center justify-center drop-shadow-xl"
+        style={{ 
+          x: useTransform(springX, (x) => x * -10), 
+          y: useTransform(springY, (y) => y * -10) 
+        }}
+        animate={{ y: [-3, 3, -3] }}
+        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-white/90 via-indigo-100/60 to-blue-300/40" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_35%,_rgba(255,255,255,1)_0%,_transparent_50%)]" />
-        {/* Core Glow Pulse (Electric Blue & Lavender) */}
-        <motion.div 
-          className="absolute inset-0 bg-gradient-to-tr from-blue-500/20 to-purple-400/20 mix-blend-overlay"
-          animate={{ opacity: [0.4, 0.8, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        />
+        <svg viewBox="0 0 100 100" className="w-[90%] h-[90%] overflow-visible">
+          <defs>
+            <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.9)" />
+              <stop offset="50%" stopColor="rgba(240,245,255,0.6)" />
+              <stop offset="100%" stopColor="rgba(255,255,255,0.8)" />
+            </linearGradient>
+            <filter id="hexShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="8" stdDeviation="12" floodColor="rgba(99,102,241,0.15)" />
+            </filter>
+          </defs>
+          <polygon 
+            points="50,5 93,27 93,73 50,95 7,73 7,27" 
+            fill="url(#hexGrad)" 
+            stroke="rgba(255,255,255,0.9)"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+            filter="url(#hexShadow)"
+            className="backdrop-blur-md"
+          />
+        </svg>
       </motion.div>
 
-      {/* Interactive Floating Particles */}
-      {[...Array(8)].map((_, i) => (
+      {/* Triangle Layer (Middle) */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center drop-shadow-lg"
+        style={{ 
+          x: useTransform(springX, (x) => x * 15), 
+          y: useTransform(springY, (y) => y * 15) 
+        }}
+        animate={{ y: [2, -2, 2] }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+      >
+        <svg viewBox="0 0 100 100" className="w-[75%] h-[75%] overflow-visible">
+          <defs>
+            <linearGradient id="triGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="rgba(255,255,255,0.95)" />
+              <stop offset="100%" stopColor="rgba(224,231,255,0.7)" />
+            </linearGradient>
+            <filter id="triShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="rgba(59,130,246,0.15)" />
+            </filter>
+          </defs>
+          <polygon 
+            points="50,15 90,82 10,82" 
+            fill="url(#triGrad)" 
+            stroke="rgba(255,255,255,1)"
+            strokeWidth="1.5"
+            strokeLinejoin="round"
+            filter="url(#triShadow)"
+          />
+        </svg>
+      </motion.div>
+
+      {/* Core "S" Layer (Inner) */}
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center"
+        style={{ 
+          x: useTransform(springX, (x) => x * 25), 
+          y: useTransform(springY, (y) => y * 25) 
+        }}
+      >
+        <svg viewBox="0 0 100 100" className="w-[50%] h-[50%] overflow-visible">
+          <defs>
+            <linearGradient id="sGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#4f46e5" /> {/* Indigo */}
+              <stop offset="50%" stopColor="#3b82f6" /> {/* Blue */}
+              <stop offset="100%" stopColor="#06b6d4" /> {/* Cyan */}
+            </linearGradient>
+            <filter id="sGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          {/* Stylized "S" Path */}
+          <path 
+            d="M 65 30 C 55 20, 35 25, 35 40 C 35 55, 65 50, 65 65 C 65 80, 45 85, 35 75"
+            fill="none"
+            stroke="url(#sGrad)"
+            strokeWidth="12"
+            strokeLinecap="round"
+            filter="url(#sGlow)"
+          />
+          <path 
+            d="M 65 30 C 55 20, 35 25, 35 40 C 35 55, 65 50, 65 65 C 65 80, 45 85, 35 75"
+            fill="none"
+            stroke="rgba(255,255,255,0.7)"
+            strokeWidth="4"
+            strokeLinecap="round"
+          />
+        </svg>
+      </motion.div>
+
+      {/* Floating Orbital Particles */}
+      {[...Array(6)].map((_, i) => (
         <motion.div
           key={`particle-${i}`}
           className={cn(
-            "absolute rounded-full blur-[1px]",
-            i % 2 === 0 ? "bg-cyan-300" : "bg-white",
-            i % 3 === 0 ? "w-1.5 h-1.5" : "w-1 h-1"
+            "absolute rounded-full",
+            i % 2 === 0 ? "bg-cyan-400" : "bg-indigo-400",
+            i % 3 === 0 ? "w-2 h-2" : "w-1 h-1"
           )}
           style={{ 
-            x: useTransform(springX, (x) => x * (20 + i * 5)), 
-            y: useTransform(springY, (y) => y * (20 + i * 5)) 
+            x: useTransform(springX, (x) => x * (15 + i * 5)), 
+            y: useTransform(springY, (y) => y * (15 + i * 5)) 
           }}
           initial={{ 
-            x: (Math.random() - 0.5) * outerRing, 
-            y: (Math.random() - 0.5) * outerRing,
+            x: (Math.random() - 0.5) * 200, 
+            y: (Math.random() - 0.5) * 200,
             opacity: 0
           }}
           animate={{ 
-            y: [null, (Math.random() - 0.5) * outerRing - 30],
-            opacity: [0, 0.9, 0]
+            rotate: 360,
+            x: [(Math.random() - 0.5) * 100, (Math.random() - 0.5) * -100],
+            y: [null, (Math.random() - 0.5) * 200 - 50],
+            opacity: [0, 0.8, 0]
           }}
           transition={{ 
-            duration: 1.5 + Math.random() * 2, 
+            duration: 3 + Math.random() * 3, 
             repeat: Infinity, 
-            ease: "easeOut",
+            ease: "linear",
             delay: Math.random() * 2
           }}
         />
