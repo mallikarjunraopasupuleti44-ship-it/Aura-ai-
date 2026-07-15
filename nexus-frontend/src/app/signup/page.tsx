@@ -1,13 +1,49 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { AuraLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Mail, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function SignupPage() {
+  const router = useRouter();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:8000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, password })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Signup failed");
+      }
+
+      // Store token securely
+      localStorage.setItem("aura_token", data.token);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex w-full bg-white">
       {/* Left Panel: Branding & Animation */}
@@ -19,18 +55,18 @@ export default function SignupPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.8 }}
-            className="text-center px-12"
+            className="text-center"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Start Your AI Journey</h2>
-            <p className="text-gray-600">
-              Upload your business once and let your AI employees handle the rest. Plan, market, automate, and grow.
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Start Your Journey</h2>
+            <p className="text-gray-600 max-w-sm">
+              Create an account to deploy your own custom AI workforce and manage your business.
             </p>
           </motion.div>
         </div>
       </div>
 
       {/* Right Panel: Signup Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 xl:px-24 relative py-12">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 xl:px-24 relative">
         <Link href="/" className="absolute top-8 left-8 sm:left-16 xl:left-24 text-gray-500 hover:text-purple-600 transition-colors flex items-center gap-2">
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
@@ -41,12 +77,12 @@ export default function SignupPage() {
           transition={{ duration: 0.6 }}
           className="max-w-md w-full mx-auto"
         >
-          <div className="mb-8 lg:hidden flex justify-center">
+          <div className="mb-10 lg:hidden flex justify-center">
              <AuraLogo size="md" />
           </div>
 
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create Account</h1>
-          <p className="text-gray-500 mb-8">Join Aura AI and build your automated workforce.</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create an account</h1>
+          <p className="text-gray-500 mb-8">Enter your details to get started.</p>
 
           <Button variant="outline" className="w-full h-12 rounded-xl mb-4 font-medium text-gray-700 bg-white hover:bg-gray-50 border-gray-200">
             <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
@@ -60,19 +96,27 @@ export default function SignupPage() {
 
           <div className="relative flex items-center py-4">
             <div className="flex-grow border-t border-gray-200"></div>
-            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">Or continue with email</span>
+            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">Or sign up with email</span>
             <div className="flex-grow border-t border-gray-200"></div>
           </div>
 
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={handleSignup}>
+            {error && (
+              <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm font-medium border border-red-100">
+                {error}
+              </div>
+            )}
             <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Full Name</label>
+              <label className="text-sm font-medium text-gray-700">Name</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input 
                   type="text" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe" 
                   className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                  required
                 />
               </div>
             </div>
@@ -83,8 +127,11 @@ export default function SignupPage() {
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com" 
                   className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                  required
                 />
               </div>
             </div>
@@ -93,17 +140,16 @@ export default function SignupPage() {
               <label className="text-sm font-medium text-gray-700">Password</label>
               <input 
                 type="password" 
-                placeholder="Create a password (min. 8 chars)" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••" 
                 className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                required
               />
             </div>
 
-            <p className="text-xs text-gray-500 py-2">
-              By signing up, you agree to our <a href="#" className="text-purple-600 hover:underline">Terms of Service</a> and <a href="#" className="text-purple-600 hover:underline">Privacy Policy</a>.
-            </p>
-
-            <Button onClick={() => window.location.href='/dashboard'} className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-medium shadow-lg shadow-purple-500/25 border-0">
-              Create Account
+            <Button type="submit" disabled={isLoading} className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-medium shadow-lg shadow-purple-500/25 border-0">
+              {isLoading ? "Creating account..." : "Sign up"}
             </Button>
           </form>
 

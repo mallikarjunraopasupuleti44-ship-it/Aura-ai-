@@ -1,13 +1,48 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { AuraLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Mail } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const res = await fetch("http://localhost:8000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(data.error || "Login failed");
+      }
+
+      // Store token securely
+      localStorage.setItem("aura_token", data.token);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen flex w-full bg-white">
       {/* Left Panel: Branding & Animation */}
@@ -64,15 +99,23 @@ export default function LoginPage() {
             <div className="flex-grow border-t border-gray-200"></div>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={handleLogin}>
+            {error && (
+              <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm font-medium border border-red-100">
+                {error}
+              </div>
+            )}
             <div className="space-y-1">
               <label className="text-sm font-medium text-gray-700">Email</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input 
                   type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com" 
                   className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                  required
                 />
               </div>
             </div>
@@ -84,8 +127,11 @@ export default function LoginPage() {
               </div>
               <input 
                 type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
                 className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                required
               />
             </div>
 
@@ -94,8 +140,8 @@ export default function LoginPage() {
               <label htmlFor="remember" className="text-sm text-gray-600">Remember me for 30 days</label>
             </div>
 
-            <Button onClick={() => window.location.href='/dashboard'} className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-medium shadow-lg shadow-purple-500/25 border-0">
-              Log in
+            <Button type="submit" disabled={isLoading} className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-medium shadow-lg shadow-purple-500/25 border-0">
+              {isLoading ? "Logging in..." : "Log in"}
             </Button>
           </form>
 

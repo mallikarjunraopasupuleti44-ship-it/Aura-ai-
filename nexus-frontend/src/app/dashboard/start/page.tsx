@@ -162,11 +162,31 @@ export default function StartBusinessPage() {
   const [activityLog, setActivityLog] = useState<string[]>([]);
   const [activeAgentIndex, setActiveAgentIndex] = useState(-1);
 
-  const handleDeploy = () => {
+  const handleDeploy = async () => {
     if (!prompt.trim() || isDeploying) return;
     setIsDeploying(true);
     setActivityLog(["Goal assigned: " + prompt, "Initializing AI Workforce..."]);
-    setActiveAgentIndex(0);
+    
+    try {
+      const token = localStorage.getItem("aura_token");
+      const res = await fetch("http://localhost:8000/api/ai/deploy", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ ideaPrompt: prompt })
+      });
+      
+      if (!res.ok) throw new Error("Deployment failed");
+      
+      // Start the UI animation sequence for agents
+      setActiveAgentIndex(0);
+    } catch (err) {
+      console.error(err);
+      setActivityLog(prev => [...prev, "Error deploying AI workforce. Are you logged in?"]);
+      setIsDeploying(false);
+    }
   };
 
   useEffect(() => {
