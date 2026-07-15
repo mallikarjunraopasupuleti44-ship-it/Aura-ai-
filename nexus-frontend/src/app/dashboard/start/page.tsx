@@ -1,154 +1,310 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, BrainCircuit, LineChart, Users, Globe, LayoutList, CheckCircle2 } from "lucide-react";
-import { AuraLogo } from "@/components/ui/logo";
+import { 
+  Rocket, 
+  BrainCircuit, 
+  LineChart, 
+  Users, 
+  Globe, 
+  LayoutList, 
+  CheckCircle2,
+  Clock,
+  FileText,
+  Activity,
+  ArrowRight,
+  ChevronRight
+} from "lucide-react";
+
+const agents = [
+  { 
+    id: "planner",
+    name: "Planner Agent", 
+    role: "Business Strategist",
+    icon: BrainCircuit, 
+    bg: "bg-purple-100",
+    text: "text-purple-600",
+    description: "Turns your idea into a complete business plan: concept, brand, market and roadmap.",
+    deliverable: "Business Plan"
+  },
+  { 
+    id: "marketing",
+    name: "Marketing Agent", 
+    role: "Growth Marketer",
+    icon: Users, 
+    bg: "bg-blue-100",
+    text: "text-blue-600",
+    description: "Creates ready-to-publish social content with captions, hashtags and a posting schedule.",
+    deliverable: "Social Campaign"
+  },
+  { 
+    id: "finance",
+    name: "Finance Agent", 
+    role: "Financial Analyst",
+    icon: LineChart, 
+    bg: "bg-green-100",
+    text: "text-green-600",
+    description: "Builds startup cost analysis, break-even point and 12-month projections with charts.",
+    deliverable: "Cost Analysis"
+  },
+  { 
+    id: "operations",
+    name: "Operations Agent", 
+    role: "Operations Manager",
+    icon: LayoutList, 
+    bg: "bg-indigo-100",
+    text: "text-indigo-600",
+    description: "Produces weekly schedules, supplier checklists and standard operating procedures.",
+    deliverable: "Weekly Schedule"
+  },
+  { 
+    id: "website",
+    name: "Website Agent", 
+    role: "Web Developer",
+    icon: Globe, 
+    bg: "bg-orange-100",
+    text: "text-orange-600",
+    description: "Generates a live landing page for your business using the brand identity.",
+    deliverable: "Landing Page"
+  }
+];
 
 export default function StartBusinessPage() {
   const [prompt, setPrompt] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [activeAgent, setActiveAgent] = useState(0);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [activeTab, setActiveTab] = useState("Command Center");
+  const [activityLog, setActivityLog] = useState<string[]>([]);
+  const [activeAgentIndex, setActiveAgentIndex] = useState(-1);
 
-  const handleGenerate = () => {
-    if (!prompt.trim()) return;
-    setIsGenerating(true);
-    // Simulate the sequence of AI agents working
-    const interval = setInterval(() => {
-      setActiveAgent((prev) => {
-        if (prev >= agents.length - 1) {
-          clearInterval(interval);
-          return prev;
-        }
-        return prev + 1;
-      });
-    }, 4000); // Change active agent every 4 seconds
+  const handleDeploy = () => {
+    if (!prompt.trim() || isDeploying) return;
+    setIsDeploying(true);
+    setActivityLog(["Goal assigned: " + prompt, "Initializing AI Workforce..."]);
+    setActiveAgentIndex(0);
   };
 
-  const agents = [
-    { name: "Planner Agent", icon: BrainCircuit, color: "text-purple-600", bg: "bg-purple-100", tasks: ["Creating Business Plan", "Defining Brand", "Mapping Roadmap", "Target Audience Strategy"] },
-    { name: "Marketing Agent", icon: Users, color: "text-pink-600", bg: "bg-pink-100", tasks: ["Writing Ad Copy", "Creating Content Calendar", "Drafting Social Posts"] },
-    { name: "Finance Agent", icon: LineChart, color: "text-green-600", bg: "bg-green-100", tasks: ["Forecasting Revenue", "Calculating Break-even", "Setting Pricing Strategy"] },
-    { name: "Operations Agent", icon: LayoutList, color: "text-blue-600", bg: "bg-blue-100", tasks: ["Building Hiring Plan", "Writing SOPs", "Finding Suppliers"] },
-    { name: "Website Agent", icon: Globe, color: "text-orange-600", bg: "bg-orange-100", tasks: ["Designing Landing Page", "Writing Website Copy", "Structuring SEO"] }
-  ];
+  useEffect(() => {
+    if (activeAgentIndex >= 0 && activeAgentIndex < agents.length) {
+      const agent = agents[activeAgentIndex];
+      const timer1 = setTimeout(() => {
+        setActivityLog(prev => [...prev, `${agent.name} is starting work on ${agent.deliverable}...`]);
+      }, 1000);
+      
+      const timer2 = setTimeout(() => {
+        setActivityLog(prev => [...prev, `${agent.name} completed ${agent.deliverable}.`]);
+        setActiveAgentIndex(activeAgentIndex + 1);
+      }, 4000);
+
+      return () => {
+        clearTimeout(timer1);
+        clearTimeout(timer2);
+      };
+    } else if (activeAgentIndex === agents.length) {
+      setTimeout(() => {
+        setActivityLog(prev => [...prev, "All deliverables completed successfully!"]);
+        setIsDeploying(false);
+        setActiveAgentIndex(-1);
+      }, 1000);
+    }
+  }, [activeAgentIndex]);
 
   return (
-    <div className="max-w-4xl mx-auto py-10">
+    <div className="max-w-[1400px] mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
       
-      {!isGenerating ? (
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="glass-card p-12 text-center rounded-3xl"
-        >
-          <div className="flex justify-center mb-6">
-            <AuraLogo size="md" />
+      {/* HEADER SECTION */}
+      <div className="glass-card p-6 border border-white/60">
+        <div className="flex items-center gap-2 text-sm font-medium text-gray-500 mb-4">
+          <span>Home</span>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-gray-900 bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1.5">
+            <Rocket className="w-3.5 h-3.5 text-blue-600" /> CofounderAI
+            <span className="text-[10px] tracking-widest text-blue-400 uppercase ml-1">Command Center</span>
+          </span>
+        </div>
+
+        <div className="flex flex-col md:flex-row gap-4 items-center">
+          <div className="relative flex-1 w-full bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <input
+              type="text"
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="e.g. I want to start a bakery..."
+              className="w-full bg-transparent outline-none px-5 py-4 text-gray-800 placeholder:text-gray-400"
+              onKeyDown={(e) => e.key === 'Enter' && handleDeploy()}
+            />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">What business would you like to build?</h1>
-          <p className="text-gray-500 mb-8 max-w-xl mx-auto text-lg">
-            Describe your idea, and your AI workforce will immediately begin building your business plan, marketing strategy, financials, and more.
-          </p>
-          
-          <div className="relative max-w-2xl mx-auto mb-6">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-pink-400 rounded-2xl blur opacity-20" />
-            <div className="relative flex items-center bg-white rounded-2xl shadow-sm border border-gray-100 p-2">
-              <input
-                type="text"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="e.g. I want to start a premium coffee shop in London..."
-                className="flex-1 bg-transparent border-none outline-none px-4 text-gray-800 text-lg placeholder:text-gray-400"
-                onKeyDown={(e) => e.key === 'Enter' && handleGenerate()}
-              />
-              <Button onClick={handleGenerate} className="rounded-xl px-6 bg-purple-600 hover:bg-purple-700 text-white font-medium ml-2">
-                Generate <Sparkles className="w-4 h-4 ml-2" />
-              </Button>
+          <Button 
+            onClick={handleDeploy} 
+            disabled={isDeploying || !prompt.trim()}
+            className="w-full md:w-auto rounded-xl px-8 py-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-medium shadow-md shadow-blue-500/20"
+          >
+            <Rocket className="w-5 h-5 mr-2" />
+            {isDeploying ? "Deploying..." : "Deploy AI Team"}
+          </Button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 mt-5">
+          <span className="text-sm font-medium text-gray-400">Try:</span>
+          {["I want to start a bakery", "Launch a home-cooked tiffin delivery service", "Open a specialty coffee shop"].map((suggestion) => (
+            <button 
+              key={suggestion}
+              onClick={() => setPrompt(suggestion)}
+              className="px-4 py-1.5 rounded-full border border-gray-200 bg-white/50 text-xs font-medium text-gray-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-colors"
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* STATS ROW */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "TASKS COMPLETED", value: activeAgentIndex > 0 ? activeAgentIndex * 3 : 0, icon: CheckCircle2, color: "text-green-500" },
+          { label: "WORDS PRODUCED", value: activeAgentIndex > 0 ? activeAgentIndex * 1500 : 0, icon: FileText, color: "text-blue-500" },
+          { label: "HOURS SAVED", value: activeAgentIndex > 0 ? `${activeAgentIndex * 12}h` : "0h", icon: Clock, color: "text-orange-500" },
+          { label: "AGENTS ACTIVE", value: isDeploying ? 5 : 0, icon: Activity, color: "text-purple-500" },
+        ].map((stat, i) => (
+          <div key={i} className="glass-card p-5 border border-white/60 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className={`w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center ${stat.color}`}>
+                <stat.icon className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="text-2xl font-bold text-gray-900">{stat.value}</div>
+                <div className="text-[10px] font-bold tracking-widest text-gray-400 uppercase">{stat.label}</div>
+              </div>
             </div>
           </div>
-          
-          <div className="flex flex-wrap justify-center gap-2">
-            <button onClick={() => setPrompt("I want to start a bakery.")} className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition-colors">"I want to start a bakery."</button>
-            <button onClick={() => setPrompt("I want to start a clothing brand.")} className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition-colors">"I want to start a clothing brand."</button>
-            <button onClick={() => setPrompt("I want to build a SaaS.")} className="px-4 py-2 rounded-full border border-gray-200 text-sm text-gray-600 hover:bg-gray-50 transition-colors">"I want to build a SaaS."</button>
-          </div>
-        </motion.div>
-      ) : (
-        <div className="space-y-12">
-          <div className="text-center">
-             <h2 className="text-3xl font-bold text-gray-900 mb-2">Your AI Team is Working</h2>
-             <p className="text-gray-500">Building: {prompt}</p>
-          </div>
+        ))}
+      </div>
 
-          <div className="relative">
-             {/* Connection Line */}
-             <div className="absolute left-12 top-0 bottom-0 w-0.5 bg-gray-100 z-0" />
-             
-             <div className="space-y-8 relative z-10">
-                {agents.map((agent, index) => {
-                  const isActive = activeAgent === index;
-                  const isCompleted = activeAgent > index;
-                  const Icon = agent.icon;
+      {/* TABS */}
+      <div className="glass-card p-1 border border-white/60 rounded-xl flex items-center">
+        {["Command Center", "Team", "Automation"].map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-3 text-sm font-semibold rounded-lg transition-all ${
+              activeTab === tab 
+                ? "bg-white shadow-sm text-blue-700" 
+                : "text-gray-500 hover:text-gray-700 hover:bg-white/40"
+            }`}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
 
-                  return (
-                    <motion.div 
-                      key={agent.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: isActive || isCompleted ? 1 : 0.4, x: 0 }}
-                      className={`flex gap-6 items-start ${isActive ? 'scale-105' : 'scale-100'} transition-transform duration-500`}
-                    >
-                      {/* Agent Avatar */}
-                      <div className={`w-24 h-24 rounded-2xl flex items-center justify-center shrink-0 shadow-lg ${isActive ? agent.bg : isCompleted ? 'bg-gray-100' : 'bg-gray-50 border border-gray-100'} transition-colors duration-500 relative`}>
-                        {isActive && (
-                           <motion.div 
-                             className="absolute inset-0 border-2 border-purple-400 rounded-2xl"
-                             animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0, 0.5] }}
-                             transition={{ duration: 2, repeat: Infinity }}
-                           />
-                        )}
-                        <Icon className={`w-10 h-10 ${isActive ? agent.color : isCompleted ? 'text-gray-500' : 'text-gray-300'}`} />
-                        {isCompleted && (
-                          <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-1 border-2 border-white">
-                            <CheckCircle2 className="w-4 h-4 text-white" />
-                          </div>
-                        )}
-                      </div>
+      {/* MAIN CONTENT GRID */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* LEFT: Agent Cards */}
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {agents.map((agent, index) => {
+            const isActive = activeAgentIndex === index;
+            const isCompleted = activeAgentIndex > index;
+            
+            return (
+              <div 
+                key={agent.id} 
+                className={`glass-card p-6 border transition-all duration-300 relative overflow-hidden ${
+                  isActive ? "border-blue-300 shadow-[0_8px_30px_rgba(59,130,246,0.12)] ring-1 ring-blue-100" : "border-white/60 hover:border-blue-100 hover:shadow-md"
+                }`}
+              >
+                {isActive && (
+                  <motion.div 
+                    layoutId="active-agent-bg"
+                    className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-purple-50/50 -z-10"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                  />
+                )}
+                
+                <div className="flex justify-between items-start mb-4">
+                  <div className="flex gap-3 items-center">
+                    <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${agent.bg} ${agent.text}`}>
+                      <agent.icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 leading-tight">{agent.name}</h3>
+                      <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider">{agent.role}</p>
+                    </div>
+                  </div>
+                  <div className={`text-[10px] font-bold tracking-widest px-2 py-1 rounded border uppercase ${
+                    isActive 
+                      ? "bg-blue-100 text-blue-700 border-blue-200 animate-pulse" 
+                      : isCompleted
+                        ? "bg-green-50 text-green-600 border-green-200"
+                        : "bg-gray-100 text-gray-500 border-gray-200"
+                  }`}>
+                    {isActive ? "LIVE" : isCompleted ? "DONE" : "IDLE"}
+                  </div>
+                </div>
 
-                      {/* Agent Work Area */}
-                      <div className={`flex-1 glass-card p-6 border ${isActive ? 'border-purple-200 shadow-purple-100' : 'border-gray-100'} min-h-[140px]`}>
-                        <div className="flex items-center justify-between mb-4">
-                           <h3 className={`text-xl font-bold ${isActive ? 'text-gray-900' : 'text-gray-500'}`}>{agent.name}</h3>
-                           {isActive && <span className="text-xs font-semibold bg-purple-100 text-purple-700 px-3 py-1 rounded-full animate-pulse">Working...</span>}
-                           {isCompleted && <span className="text-xs font-semibold bg-green-100 text-green-700 px-3 py-1 rounded-full">Completed</span>}
-                        </div>
-                        
-                        <div className="space-y-3">
-                          {agent.tasks.map((task, tIndex) => {
-                            // Show tasks progressively if active
-                            const showTask = isCompleted || (isActive && tIndex <= (Date.now() % agent.tasks.length));
-                            
-                            return (
-                              <motion.div 
-                                key={tIndex}
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: isActive || isCompleted ? 1 : 0 }}
-                                className="flex items-center gap-3 text-sm text-gray-600"
-                              >
-                                <div className={`w-1.5 h-1.5 rounded-full ${isCompleted ? 'bg-green-500' : 'bg-purple-500'}`} />
-                                {task}
-                              </motion.div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </motion.div>
-                  );
-                })}
-             </div>
+                <p className="text-sm text-gray-600 mb-5 leading-relaxed line-clamp-3">
+                  {agent.description}
+                </p>
+
+                <div className="text-xs text-gray-500 bg-white/50 rounded-md p-2.5 border border-white/60 flex justify-between items-center">
+                  <span className="font-medium">Deliverable:</span>
+                  <span className="font-semibold text-gray-900">{agent.deliverable}</span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* RIGHT: Team Activity */}
+        <div className="lg:col-span-1">
+          <div className="glass-card border border-white/60 h-full min-h-[500px] flex flex-col relative overflow-hidden">
+            <div className="p-5 border-b border-gray-100/50 flex justify-between items-center bg-white/40 backdrop-blur-sm sticky top-0 z-10">
+              <h3 className="font-bold text-gray-900">Team Activity</h3>
+              <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-widest text-green-600 uppercase bg-green-50 px-2 py-1 rounded border border-green-200">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500"></span>
+                </span>
+                LIVE
+              </div>
+            </div>
+
+            <div className="p-5 flex-1 overflow-y-auto">
+              <AnimatePresence>
+                {activityLog.length === 0 ? (
+                  <motion.div 
+                    initial={{ opacity: 0 }} 
+                    animate={{ opacity: 1 }}
+                    className="h-full flex items-center justify-center text-center p-6"
+                  >
+                    <p className="text-sm text-gray-400">
+                      Your AI team's activity will appear here once you assign a goal.
+                    </p>
+                  </motion.div>
+                ) : (
+                  <div className="space-y-4">
+                    {activityLog.map((log, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 0.1 }}
+                        className="flex gap-3 text-sm"
+                      >
+                        <div className="mt-1 w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+                        <span className="text-gray-700 leading-snug">{log}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
-      )}
+
+      </div>
     </div>
   );
 }
