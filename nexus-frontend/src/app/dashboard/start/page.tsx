@@ -168,8 +168,9 @@ export default function StartBusinessPage() {
     setActivityLog(["Goal assigned: " + prompt, "Initializing AI Workforce..."]);
     
     try {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://aura-ai-orio.onrender.com";
       const token = localStorage.getItem("aura_token");
-      const res = await fetch("http://localhost:8000/api/ai/deploy", {
+      const res = await fetch(`${API_URL}/api/ai/deploy`, {
         method: "POST",
         headers: { 
           "Content-Type": "application/json",

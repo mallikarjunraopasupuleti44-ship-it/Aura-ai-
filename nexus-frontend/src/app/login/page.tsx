@@ -21,7 +21,8 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/auth/login", {
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://aura-ai-orio.onrender.com";
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password })
