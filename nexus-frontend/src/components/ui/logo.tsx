@@ -120,23 +120,7 @@ export function AuraLogo({ className, size = "md" }: LogoProps) {
             <ellipse cx="100" cy="100" rx="90" ry="35" fill="none" stroke="rgba(216,180,254,0.5)" strokeWidth="1.5" transform="rotate(75 100 100)" />
             <ellipse cx="100" cy="100" rx="90" ry="35" fill="none" stroke="rgba(249,168,212,0.5)" strokeWidth="1.5" transform="rotate(135 100 100)" />
 
-            {/* Animated Nodes using SVG animateMotion */}
-            <circle r="7" fill="url(#nodeBlue)" filter="url(#glowBlue)">
-              <animateMotion dur="8s" repeatCount="indefinite" path="M 10 100 A 90 35 15 1 1 190 100 A 90 35 15 1 1 10 100" />
-            </circle>
-            <circle r="7" fill="url(#nodePurple)" filter="url(#glowPurple)">
-              <animateMotion dur="10s" repeatCount="indefinite" path="M 100 10 A 35 90 75 1 1 100 190 A 35 90 75 1 1 100 10" />
-            </circle>
-            <circle r="7" fill="url(#nodePink)" filter="url(#glowPink)">
-              <animateMotion dur="12s" repeatCount="indefinite" path="M 190 100 A 90 35 135 1 1 10 100 A 90 35 135 1 1 190 100" />
-            </circle>
-            {/* Reverse direction nodes */}
-            <circle r="5" fill="url(#nodeBlue)" filter="url(#glowBlue)">
-              <animateMotion dur="11s" repeatCount="indefinite" path="M 190 100 A 90 35 15 1 0 10 100 A 90 35 15 1 0 190 100" />
-            </circle>
-            <circle r="5" fill="url(#nodePink)" filter="url(#glowPink)">
-              <animateMotion dur="9s" repeatCount="indefinite" path="M 100 190 A 35 90 75 1 0 100 10 A 35 90 75 1 0 100 190" />
-            </circle>
+
           </svg>
         </motion.div>
 
