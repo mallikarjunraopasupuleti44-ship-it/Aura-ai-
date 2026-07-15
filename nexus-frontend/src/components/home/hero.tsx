@@ -59,7 +59,7 @@ export function Hero() {
             animate={{ rotate: 360 }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
           />
-          <AuraLogo size="xl" className="animate-float" />
+          <AuraLogo size="lg" className="animate-float" />
         </motion.div>
 
         {/* Small Badge */}
