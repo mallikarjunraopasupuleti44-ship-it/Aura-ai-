@@ -52,18 +52,18 @@ export default function EmployeesPage() {
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ delay: idx * 0.1 }}
-                 className="glass-card p-6 border border-gray-100 flex items-center justify-between"
+                 className="glass-card p-6 border border-gray-100 flex items-center justify-between hover:shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 hover:border-purple-200 transition-all duration-300 group cursor-pointer"
                >
                  <div className="flex items-center gap-4">
-                   <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center border border-purple-200">
-                     <Icon className="w-6 h-6 text-purple-600" />
+                   <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center border border-purple-200 group-hover:bg-purple-600 transition-colors duration-300">
+                     <Icon className="w-6 h-6 text-purple-600 group-hover:text-white transition-colors duration-300" />
                    </div>
                    <div>
-                     <h3 className="font-semibold text-gray-900">{agent.name}</h3>
+                     <h3 className="font-semibold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">{agent.name}</h3>
                      <p className="text-sm text-gray-500">{agent.role}</p>
                    </div>
                  </div>
-                 <Link href="/dashboard/chat" className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium hover:bg-purple-100 transition-colors">
+                 <Link href="/dashboard/chat" className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium hover:bg-purple-600 hover:text-white transition-all shadow-sm">
                    Chat
                  </Link>
                </motion.div>
@@ -88,7 +88,7 @@ export default function EmployeesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + idx * 0.1 }}
-                className="bg-white rounded-3xl p-6 border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-lg hover:border-purple-200 transition-all group flex flex-col"
+                className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-2xl hover:shadow-pink-500/10 hover:-translate-y-1 hover:border-pink-200 transition-all duration-300 group flex flex-col cursor-pointer"
               >
                 <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-4 group-hover:bg-purple-50 transition-colors">
                   <Icon className="w-6 h-6 text-gray-400 group-hover:text-purple-600 transition-colors" />
