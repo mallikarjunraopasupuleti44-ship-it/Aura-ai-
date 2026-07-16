@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: "Upload your business once. Aura AI understands everything. Your AI employees plan, market, automate, analyse, create documents, send emails, manage customers, build websites, and help grow your company while you stay in control.",
 };
 
+import { GlobalMouseGlow } from "@/components/ui/MouseGlow";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -22,7 +24,10 @@ export default function RootLayout({
       lang="en"
       className={`${outfit.variable} h-full antialiased font-sans`}
     >
-      <body className="min-h-full flex flex-col selection:bg-purple-100 selection:text-purple-900">{children}</body>
+      <body className="min-h-full flex flex-col selection:bg-purple-100 selection:text-purple-900">
+        <GlobalMouseGlow />
+        {children}
+      </body>
     </html>
   );
 }
