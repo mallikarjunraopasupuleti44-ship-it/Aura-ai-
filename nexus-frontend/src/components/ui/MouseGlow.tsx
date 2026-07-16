@@ -28,7 +28,7 @@ export function GlobalMouseGlow() {
 
   return (
     <motion.div
-      className="pointer-events-none fixed top-0 left-0 z-50 rounded-full mix-blend-screen"
+      className="pointer-events-none fixed top-0 left-0 z-[9999] rounded-full"
       style={{
         x: springX,
         y: springY,
@@ -36,7 +36,7 @@ export function GlobalMouseGlow() {
         translateY: "-50%",
         width: "600px",
         height: "600px",
-        background: "radial-gradient(circle, rgba(255,107,129,0.12) 0%, rgba(188,98,255,0.06) 40%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(255,107,129,0.2) 0%, rgba(255,107,129,0.08) 30%, transparent 70%)",
       }}
     />
   );
