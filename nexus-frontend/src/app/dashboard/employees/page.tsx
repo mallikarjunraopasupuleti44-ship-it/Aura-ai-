@@ -52,21 +52,21 @@ export default function EmployeesPage() {
                  initial={{ opacity: 0, y: 20 }}
                  animate={{ opacity: 1, y: 0 }}
                  transition={{ delay: idx * 0.1 }}
-                 className="relative overflow-hidden p-6 border border-gray-200/60 flex items-center justify-between hover:shadow-2xl hover:shadow-purple-500/20 hover:-translate-y-2 hover:border-purple-300/60 transition-all duration-500 group cursor-pointer bg-white/70 backdrop-blur-xl rounded-3xl"
+                 className="relative overflow-hidden p-6 border border-gray-200/50 flex items-center justify-between hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 hover:border-purple-200/50 transition-all duration-500 group cursor-pointer bg-white/80 backdrop-blur-md rounded-3xl"
                >
-                 {/* Inner animated gradient background */}
-                 <div className="absolute inset-0 bg-gradient-to-r from-purple-100/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                 {/* Inner animated gradient background (much softer) */}
+                 <div className="absolute inset-0 bg-gradient-to-r from-purple-50/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                  
-                 <div className="relative z-10 flex items-center gap-5">
-                   <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center border border-purple-100 group-hover:bg-gradient-to-br group-hover:from-purple-600 group-hover:to-pink-500 transition-all duration-500 shadow-sm group-hover:shadow-purple-500/40 group-hover:scale-110 group-hover:-rotate-3">
-                     <Icon className="w-7 h-7 text-purple-600 group-hover:text-white transition-colors duration-500" />
+                 <div className="relative z-10 flex items-center gap-4">
+                   <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center border border-purple-100 group-hover:bg-purple-100 transition-all duration-500 shadow-sm">
+                     <Icon className="w-6 h-6 text-purple-600 transition-colors duration-500" />
                    </div>
                    <div>
-                     <h3 className="font-bold text-gray-900 group-hover:text-purple-900 transition-colors duration-300 text-lg">{agent.name}</h3>
-                     <p className="text-sm text-gray-500 font-medium">{agent.role}</p>
+                     <h3 className="font-semibold text-gray-900 group-hover:text-purple-800 transition-colors duration-300">{agent.name}</h3>
+                     <p className="text-sm text-gray-500">{agent.role}</p>
                    </div>
                  </div>
-                 <Link href="/dashboard/chat" className="relative z-10 px-6 py-2.5 bg-white text-purple-700 rounded-full text-sm font-bold border border-purple-100 hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-500 hover:text-white hover:border-transparent transition-all duration-300 shadow-sm group-hover:shadow-md">
+                 <Link href="/dashboard/chat" className="relative z-10 px-5 py-2 bg-white text-purple-700 rounded-full text-sm font-medium border border-purple-100 hover:bg-purple-50 transition-all duration-300 shadow-sm">
                    Chat
                  </Link>
                </motion.div>
@@ -91,19 +91,19 @@ export default function EmployeesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + idx * 0.1 }}
-                className="relative overflow-hidden bg-white/70 backdrop-blur-xl rounded-3xl p-6 border border-gray-200/60 shadow-sm hover:shadow-2xl hover:shadow-pink-500/20 hover:-translate-y-2 hover:border-pink-300/60 transition-all duration-500 group flex flex-col cursor-pointer"
+                className="relative overflow-hidden bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-gray-200/50 shadow-sm hover:shadow-xl hover:shadow-pink-500/5 hover:-translate-y-1 hover:border-pink-200/50 transition-all duration-500 group flex flex-col cursor-pointer"
               >
-                {/* Magical animated background glow on hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-pink-100/40 via-purple-50/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+                {/* Magical animated background glow on hover (much softer) */}
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-50/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col h-full">
-                  <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mb-5 border border-gray-100 group-hover:bg-gradient-to-br group-hover:from-purple-500 group-hover:to-pink-500 transition-all duration-500 shadow-sm group-hover:shadow-pink-500/40 group-hover:scale-110 group-hover:rotate-3">
-                    <Icon className="w-7 h-7 text-gray-400 group-hover:text-white transition-colors duration-500" />
+                  <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center mb-5 border border-gray-100 group-hover:bg-purple-50 transition-all duration-500 shadow-sm">
+                    <Icon className="w-6 h-6 text-gray-400 group-hover:text-purple-600 transition-colors duration-500" />
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-900 transition-colors">{agent.name}</h3>
-                  <p className="text-sm text-gray-500 font-medium flex-1 mb-6 leading-relaxed group-hover:text-gray-700 transition-colors">{agent.desc}</p>
-                  <Button variant="outline" className="w-full rounded-xl border-gray-200/80 bg-white/80 font-bold hover:bg-gradient-to-r hover:from-purple-600 hover:to-pink-500 hover:text-white hover:border-transparent transition-all duration-300 shadow-sm group-hover:shadow-md">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2 group-hover:text-purple-800 transition-colors">{agent.name}</h3>
+                  <p className="text-sm text-gray-500 flex-1 mb-6 leading-relaxed">{agent.desc}</p>
+                  <Button variant="outline" className="w-full rounded-xl border-gray-200/80 bg-white hover:bg-gray-50 hover:text-purple-700 hover:border-purple-200 transition-all duration-300 shadow-sm">
                     Hire Agent
                   </Button>
                 </div>
