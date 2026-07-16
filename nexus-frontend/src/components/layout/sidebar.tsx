@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
+import { AuraLogo } from "@/components/ui/logo";
 import { 
   LayoutDashboard, 
   Users, 
@@ -42,7 +42,10 @@ export function Sidebar() {
     <aside className="w-[280px] h-[calc(100vh-2rem)] fixed top-4 left-4 z-40 flex flex-col pt-8 pb-6 aurora-glass">
       {/* Logo Area */}
       <Link href="/dashboard" className="flex items-center gap-3 px-6 mb-12 group">
-        <AnimatedLogo size="md" withText={true} />
+        <div className="flex items-center gap-3">
+          <AuraLogo size="sm" />
+          <span className="font-extrabold text-xl tracking-tight text-[#0A121A]">Aura <span className="text-[#4F7CFF]">AI</span></span>
+        </div>
       </Link>
 
       {/* Main Navigation */}

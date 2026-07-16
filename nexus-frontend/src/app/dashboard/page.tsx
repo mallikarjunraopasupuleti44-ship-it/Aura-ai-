@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
+import { AuraLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { 
@@ -94,7 +94,7 @@ export default function DashboardPage() {
         <div className="absolute bottom-[-50%] right-[-10%] w-[60%] h-[150%] bg-[#2FD9FF]/5 blur-[100px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 flex flex-col items-center w-full">
-          <AnimatedLogo size="lg" withText={false} className="mb-8" />
+          <AuraLogo size="lg" className="mb-8" />
           
           <motion.h1 
             initial={{ opacity: 0, y: 10 }}
@@ -187,7 +187,7 @@ export default function DashboardPage() {
           >
             <GlassCard className="w-full max-w-md p-8 text-center" glow="blue">
               <div className="relative w-20 h-20 mx-auto mb-6">
-                <AnimatedLogo size="lg" withText={false} />
+                <AuraLogo size="lg" />
               </div>
               <h3 className="text-xl font-bold text-[#0A121A] mb-2">{activeWorkflow}</h3>
               <p className="text-[#0A121A]/60 mb-6">Agents are collaborating on this task...</p>

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
+import { AuraLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
 import { Play, ArrowRight, ShieldCheck, Zap, Code2, Building2 } from "lucide-react";
 import Link from "next/link";
@@ -49,7 +49,7 @@ export function Hero() {
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="mb-12 relative flex justify-center items-center w-32 h-32"
         >
-          <AnimatedLogo size="xl" withText={false} />
+          <AuraLogo size="xl" />
         </motion.div>
 
         {/* Small Badge */}
