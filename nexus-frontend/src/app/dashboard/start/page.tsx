@@ -490,8 +490,8 @@ export default function StartBusinessPage() {
       <AnimatePresence>
         {isPanelOpen && selectedTask && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="fixed inset-0 z-40 bg-[#0A121A]/40 backdrop-blur-sm" onClick={closePanel} />
-            <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="fixed inset-0 m-auto z-50 w-full max-w-4xl h-[85vh] max-h-[850px] bg-white/80 backdrop-blur-2xl rounded-3xl shadow-[0_30px_100px_rgba(79,124,255,0.2)] flex flex-col border border-white/80 overflow-hidden">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="fixed inset-y-0 right-0 left-[312px] z-40 bg-[#0A121A]/40 backdrop-blur-sm" onClick={closePanel} />
+            <motion.div initial={{ scale: 0.95, opacity: 0, y: 20 }} animate={{ scale: 1, opacity: 1, y: 0 }} exit={{ scale: 0.95, opacity: 0, y: 20 }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="fixed inset-y-0 right-0 left-[312px] m-auto z-50 w-full max-w-4xl h-[85vh] max-h-[850px] bg-white/80 backdrop-blur-2xl rounded-3xl shadow-[0_30px_100px_rgba(79,124,255,0.2)] flex flex-col border border-white/80 overflow-hidden">
               <div className="px-10 py-8 border-b border-white/40 flex justify-between items-center shrink-0 bg-white/40">
                 <div>
                   <h3 className="font-bold text-2xl text-[#0A121A] flex items-center gap-3">
