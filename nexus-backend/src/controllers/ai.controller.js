@@ -42,7 +42,7 @@ const deployAgents = async (req, res) => {
 
 const runAgents = async (projectId, ideaPrompt) => {
   try {
-    const model = 'gemini-2.5-flash';
+    const model = 'gemini-1.5-flash';
 
     // Agent 1: Planner
     const plannerPrompt = `You are a Business Strategist. The user wants to build: "${ideaPrompt}". Provide a concise business plan including concept, target market, and a quick roadmap.`;
@@ -77,6 +77,15 @@ const runAgents = async (projectId, ideaPrompt) => {
 
   } catch (error) {
     console.error('Error running agents:', error);
+    
+    // Save an error task so the user sees it in the UI
+    await saveTask(projectId, 'System Error', 'AI Manager', 'Error Log', `**Failed to generate content.**\n\nError details: ${error.message || 'Unknown error'}\n\nPlease check your GEMINI_API_KEY in the Render Environment Variables.`);
+    
+    // Mark project as completed so polling stops
+    await prisma.project.update({
+      where: { id: projectId },
+      data: { status: 'completed' }
+    });
   }
 };
 
