@@ -186,15 +186,18 @@ export default function StartBusinessPage() {
         body: JSON.stringify({ ideaPrompt: prompt })
       });
       
-      if (!res.ok) throw new Error("Deployment failed");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        throw new Error(errorData?.error || "Deployment failed");
+      }
       
       const data = await res.json();
       setProjectId(data.projectId);
       setProjectStatus({ status: 'deploying', agentTasks: [] });
       
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setActivityLog(prev => [...prev, "Error deploying AI workforce. Make sure you are logged in.", "If using a free Render backend, it may take 1-2 minutes to wake up. Please try again in a moment."]);
+      setActivityLog(prev => [...prev, `Error: ${err.message}`, "If using a free Render backend, it may take 1-2 minutes to wake up."]);
       setIsDeploying(false);
     }
   };
