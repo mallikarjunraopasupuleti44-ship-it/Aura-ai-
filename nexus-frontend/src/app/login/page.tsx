@@ -80,7 +80,7 @@ export default function LoginPage() {
           className="max-w-md w-full mx-auto"
         >
           <div className="mb-10 lg:hidden flex justify-center">
-             <AuraLogo size="md" />
+             <AnimatedLogo size="md" withText={true} />
           </div>
 
           <h1 className="text-4xl font-bold text-[#0A121A] mb-2 tracking-tight">Log in</h1>
