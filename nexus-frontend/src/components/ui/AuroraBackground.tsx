@@ -30,6 +30,25 @@ export function AuroraBackground() {
         <rect width="100%" height="100%" filter="url(#noiseFilter)" />
       </svg>
 
+      {/* Floating Particles */}
+      <div className="absolute inset-0">
+        {particles.map((p, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-[#4F7CFF] will-change-transform"
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              width: `${p.size}px`,
+              height: `${p.size}px`,
+              opacity: 0.2,
+              animation: `particleFloat ${p.duration}s ease-in-out infinite`,
+              animationDelay: `${p.delay}s`,
+              boxShadow: "0 0 10px rgba(79, 124, 255, 0.8)",
+            }}
+          />
+        ))}
+      </div>
     </div>
   );
 }
