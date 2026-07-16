@@ -17,8 +17,11 @@ import {
   ArrowRight,
   ChevronRight,
   Link,
-  Zap
+  Zap,
+  Search,
+  X
 } from "lucide-react";
+import ReactMarkdown from 'react-markdown';
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -160,7 +163,11 @@ export default function StartBusinessPage() {
   const [isDeploying, setIsDeploying] = useState(false);
   const [activeTab, setActiveTab] = useState("Command Center");
   const [activityLog, setActivityLog] = useState<string[]>([]);
-  const [activeAgentIndex, setActiveAgentIndex] = useState(-1);
+  
+  // New state variables for real-time polling
+  const [projectId, setProjectId] = useState<string | null>(null);
+  const [projectStatus, setProjectStatus] = useState<any>(null);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
 
   const handleDeploy = async () => {
     if (!prompt.trim() || isDeploying) return;
@@ -168,7 +175,7 @@ export default function StartBusinessPage() {
     setActivityLog(["Goal assigned: " + prompt, "Initializing AI Workforce..."]);
     
     try {
-      const API_URL = "https://aura-ai-orio.onrender.com";
+      const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://aura-ai-orio.onrender.com";
       const token = localStorage.getItem("aura_token");
       const res = await fetch(`${API_URL}/api/ai/deploy`, {
         method: "POST",
@@ -181,8 +188,10 @@ export default function StartBusinessPage() {
       
       if (!res.ok) throw new Error("Deployment failed");
       
-      // Start the UI animation sequence for agents
-      setActiveAgentIndex(0);
+      const data = await res.json();
+      setProjectId(data.projectId);
+      setProjectStatus({ status: 'deploying', agentTasks: [] });
+      
     } catch (err) {
       console.error(err);
       setActivityLog(prev => [...prev, "Error deploying AI workforce. Are you logged in?"]);
@@ -190,30 +199,41 @@ export default function StartBusinessPage() {
     }
   };
 
+  // Polling effect
   useEffect(() => {
-    if (activeAgentIndex >= 0 && activeAgentIndex < agents.length) {
-      const agent = agents[activeAgentIndex];
-      const timer1 = setTimeout(() => {
-        setActivityLog(prev => [...prev, `${agent.name} is starting work on ${agent.deliverable}...`]);
-      }, 1000);
-      
-      const timer2 = setTimeout(() => {
-        setActivityLog(prev => [...prev, `${agent.name} completed ${agent.deliverable}.`]);
-        setActiveAgentIndex(activeAgentIndex + 1);
-      }, 4000);
-
-      return () => {
-        clearTimeout(timer1);
-        clearTimeout(timer2);
-      };
-    } else if (activeAgentIndex === agents.length) {
-      setTimeout(() => {
-        setActivityLog(prev => [...prev, "All deliverables completed successfully!"]);
-        setIsDeploying(false);
-        setActiveAgentIndex(-1);
-      }, 1000);
+    let interval: NodeJS.Timeout;
+    if (projectId && projectStatus?.status !== 'completed') {
+      interval = setInterval(async () => {
+        try {
+          const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://aura-ai-orio.onrender.com";
+          const token = localStorage.getItem("aura_token");
+          const res = await fetch(`${API_URL}/api/ai/status/${projectId}`, {
+            headers: { "Authorization": `Bearer ${token}` }
+          });
+          if (res.ok) {
+            const data = await res.json();
+            setProjectStatus(data.project);
+            
+            // Build activity log based on real agent tasks
+            const logs: string[] = ["Goal assigned: " + data.project.ideaPrompt, "Initializing AI Workforce..."];
+            if (data.project.agentTasks) {
+               data.project.agentTasks.forEach((task: any) => {
+                 logs.push(`${task.agentName} finished — ${task.deliverable} ready for review`);
+               });
+            }
+            if (data.project.status === 'completed') {
+               logs.push("All deliverables completed successfully!");
+               setIsDeploying(false);
+            }
+            setActivityLog(logs);
+          }
+        } catch (err) {
+          console.error("Polling error:", err);
+        }
+      }, 3000);
     }
-  }, [activeAgentIndex]);
+    return () => clearInterval(interval);
+  }, [projectId, projectStatus?.status]);
 
   return (
     <div className="max-w-[1400px] mx-auto py-8 px-4 sm:px-6 lg:px-8 flex flex-col gap-8">
@@ -272,10 +292,10 @@ export default function StartBusinessPage() {
       {/* STATS ROW */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "TASKS COMPLETED", value: activeAgentIndex > 0 ? activeAgentIndex * 3 : 0, icon: CheckCircle2, color: "text-green-500" },
-          { label: "WORDS PRODUCED", value: activeAgentIndex > 0 ? activeAgentIndex * 1500 : 0, icon: FileText, color: "text-blue-500" },
-          { label: "HOURS SAVED", value: activeAgentIndex > 0 ? `${activeAgentIndex * 12}h` : "0h", icon: Clock, color: "text-orange-500" },
-          { label: "AGENTS ACTIVE", value: isDeploying ? 5 : 0, icon: Activity, color: "text-purple-500" },
+          { label: "TASKS COMPLETED", value: projectStatus?.agentTasks?.length || 0, icon: CheckCircle2, color: "text-green-500" },
+          { label: "WORDS PRODUCED", value: (projectStatus?.agentTasks?.length || 0) * 450, icon: FileText, color: "text-blue-500" },
+          { label: "HOURS SAVED", value: projectStatus?.agentTasks?.length ? `${(projectStatus.agentTasks.length * 12)}h` : "0h", icon: Clock, color: "text-orange-500" },
+          { label: "AGENTS ACTIVE", value: (isDeploying || projectStatus?.status === 'deploying') ? 5 : 0, icon: Activity, color: "text-purple-500" },
         ].map((stat, i) => (
           <GlowCard key={i} className="p-5">
             <div className="flex items-center gap-4">
@@ -327,15 +347,16 @@ export default function StartBusinessPage() {
           {/* LEFT: Agent Cards */}
           <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
             {agents.map((agent, index) => {
-              const isActive = activeAgentIndex === index;
-              const isCompleted = activeAgentIndex > index;
+              const task = projectStatus?.agentTasks?.find((t: any) => t.agentName === agent.name);
+              const isCompleted = !!task;
+              const isActive = (isDeploying || projectStatus?.status === 'deploying') && !isCompleted;
               
               return (
-                <GlowCard key={agent.id} className={`p-6 ${isActive ? "border-pink-300 shadow-[0_8px_30px_rgba(236,72,153,0.12)] ring-1 ring-pink-100" : ""}`}>
+                <GlowCard key={agent.id} className={`p-6 ${isActive ? "border-cyan-300 shadow-[0_8px_30px_rgba(6,182,212,0.12)] ring-1 ring-cyan-100" : ""}`}>
                   {isActive && (
                     <motion.div 
                       layoutId="active-agent-bg"
-                      className="absolute inset-0 bg-gradient-to-br from-pink-50/50 to-purple-50/50 -z-10"
+                      className="absolute inset-0 bg-gradient-to-br from-cyan-50/50 to-blue-50/50 -z-10"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                     />
@@ -353,12 +374,12 @@ export default function StartBusinessPage() {
                     </div>
                     <div className={`text-[10px] font-bold tracking-widest px-2 py-1 rounded border uppercase ${
                       isActive 
-                        ? "bg-pink-100 text-pink-700 border-pink-200 animate-pulse" 
+                        ? "bg-cyan-100 text-cyan-700 border-cyan-200 animate-pulse" 
                         : isCompleted
-                          ? "bg-green-50 text-green-600 border-green-200"
+                          ? "bg-orange-50 text-orange-600 border-orange-200"
                           : "bg-gray-100 text-gray-500 border-gray-200"
                     }`}>
-                      {isActive ? "LIVE" : isCompleted ? "DONE" : "IDLE"}
+                      {isActive ? "WORKING" : isCompleted ? "NEEDS REVIEW" : "IDLE"}
                     </div>
                   </div>
 
@@ -367,8 +388,19 @@ export default function StartBusinessPage() {
                   </p>
 
                   <div className="text-xs text-gray-500 bg-white/50 rounded-md p-2.5 border border-white/60 flex justify-between items-center mt-auto">
-                    <span className="font-medium">Deliverable:</span>
-                    <span className="font-semibold text-gray-900">{agent.deliverable}</span>
+                    <div>
+                      <span className="font-medium">Deliverable: </span>
+                      <span className="font-semibold text-gray-900">{agent.deliverable}</span>
+                    </div>
+                    {isCompleted && (
+                      <button 
+                        onClick={() => setSelectedTask(task)}
+                        className="bg-cyan-50 hover:bg-cyan-100 text-cyan-600 font-bold px-3 py-1.5 rounded-full flex items-center gap-1.5 transition-colors shadow-sm"
+                      >
+                        <Search className="w-3 h-3" />
+                        Review work
+                      </button>
+                    )}
                   </div>
                 </GlowCard>
               );
@@ -561,6 +593,45 @@ export default function StartBusinessPage() {
           </GlowCard>
         </div>
       )}
+
+      {/* MODAL FOR REVIEWING DELIVERABLES */}
+      <AnimatePresence>
+        {selectedTask && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+          >
+            <motion.div 
+              initial={{ scale: 0.95, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 20 }}
+              className="bg-white w-full max-w-3xl max-h-[85vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-200"
+            >
+              <div className="p-5 border-b flex justify-between items-center bg-gray-50">
+                <div>
+                  <h3 className="font-bold text-lg text-gray-900 flex items-center gap-3">
+                    {selectedTask.deliverable} 
+                    <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full uppercase tracking-widest font-bold">Awaiting Approval</span>
+                  </h3>
+                  <p className="text-xs text-gray-500 mt-1">Produced by {selectedTask.agentName} ({selectedTask.agentRole})</p>
+                </div>
+                <button onClick={() => setSelectedTask(null)} className="p-2 hover:bg-gray-200 rounded-full text-gray-500 transition-colors">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <div className="p-8 overflow-y-auto flex-1 prose prose-sm max-w-none prose-headings:text-gray-900 prose-a:text-cyan-600">
+                <ReactMarkdown>{selectedTask.content}</ReactMarkdown>
+              </div>
+              <div className="p-4 border-t bg-gray-50 flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setSelectedTask(null)} className="rounded-xl border-gray-300 text-gray-700 hover:bg-gray-100 font-medium">Request revision</Button>
+                <Button onClick={() => setSelectedTask(null)} className="rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold shadow-md shadow-green-500/20 px-6">Approve work</Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
