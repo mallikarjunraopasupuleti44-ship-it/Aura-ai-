@@ -54,8 +54,11 @@ export default function EmployeesPage() {
                  transition={{ delay: idx * 0.1 }}
                  className="relative overflow-hidden p-6 border border-gray-200/50 flex items-center justify-between hover:shadow-xl hover:shadow-purple-500/5 hover:-translate-y-1 hover:border-purple-200/50 transition-all duration-500 group cursor-pointer bg-white/80 backdrop-blur-md rounded-3xl"
                >
-                 {/* Inner animated gradient background (much softer) */}
-                 <div className="absolute inset-0 bg-gradient-to-r from-purple-50/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                 {/* Permanent animated colorful background */}
+                 <div className="absolute inset-0 mesh-bg opacity-40 pointer-events-none" />
+                 
+                 {/* Inner animated gradient background on hover */}
+                 <div className="absolute inset-0 bg-gradient-to-r from-purple-50/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                  
                  <div className="relative z-10 flex items-center gap-4">
                    <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center border border-purple-100 group-hover:bg-purple-100 transition-all duration-500 shadow-sm">
@@ -93,8 +96,11 @@ export default function EmployeesPage() {
                 transition={{ delay: 0.2 + idx * 0.1 }}
                 className="relative overflow-hidden bg-white/80 backdrop-blur-md rounded-3xl p-6 border border-gray-200/50 shadow-sm hover:shadow-xl hover:shadow-pink-500/5 hover:-translate-y-1 hover:border-pink-200/50 transition-all duration-500 group flex flex-col cursor-pointer"
               >
-                {/* Magical animated background glow on hover (much softer) */}
-                <div className="absolute inset-0 bg-gradient-to-br from-pink-50/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                {/* Permanent animated colorful background */}
+                <div className="absolute inset-0 mesh-bg opacity-40 pointer-events-none" />
+                
+                {/* Magical animated background glow on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-pink-50/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                 
                 {/* Content */}
                 <div className="relative z-10 flex flex-col h-full">
