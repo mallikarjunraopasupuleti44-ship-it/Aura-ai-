@@ -35,8 +35,10 @@ export default function SignupPage() {
         throw new Error(data.error || "Signup failed");
       }
 
-      // Store token securely
+      // Store token and user info
       localStorage.setItem("aura_token", data.token);
+      if (data.user?.name) localStorage.setItem("aura_user_name", data.user.name);
+      if (data.user?.email) localStorage.setItem("aura_user_email", data.user.email);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);

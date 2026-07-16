@@ -42,7 +42,7 @@ const deployAgents = async (req, res) => {
 
 const runAgents = async (projectId, ideaPrompt) => {
   try {
-    const model = 'gemini-2.5-flash';
+    const model = 'gemini-2.0-flash';
 
     // Agent 1: Planner
     const plannerPrompt = `You are a Business Strategist. The user wants to build: "${ideaPrompt}". Provide a concise business plan including concept, target market, and a quick roadmap.`;

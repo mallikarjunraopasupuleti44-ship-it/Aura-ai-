@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AuraLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,42 @@ import {
   Mail, Edit3, Settings
 } from "lucide-react";
 
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return "Good Morning";
+  if (hour >= 12 && hour < 17) return "Good Afternoon";
+  if (hour >= 17 && hour < 21) return "Good Evening";
+  return "Good Night";
+}
+
 export default function DashboardPage() {
+  const [userName, setUserName] = useState("there");
+  const [greeting, setGreeting] = useState("Welcome");
+
+  useEffect(() => {
+    // Set time-based greeting
+    setGreeting(getGreeting());
+
+    // Get user name from localStorage (stored during login/signup)
+    const storedName = localStorage.getItem("aura_user_name");
+    if (storedName) {
+      setUserName(storedName);
+    } else {
+      // Try to decode from JWT token
+      const token = localStorage.getItem("aura_token");
+      if (token) {
+        try {
+          const payload = JSON.parse(atob(token.split('.')[1]));
+          if (payload.name) {
+            setUserName(payload.name);
+          }
+        } catch (e) {
+          // Token decode failed, use default
+        }
+      }
+    }
+  }, []);
+
   const statusBadges = [
     { label: "Business Ready", icon: CheckCircle2, color: "text-green-600", bg: "bg-green-50", border: "border-green-200" },
     { label: "Knowledge Loaded", icon: Database, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200" },
@@ -47,7 +82,7 @@ export default function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-4xl font-bold text-gray-900 mb-2"
           >
-            Good Morning, Alexander
+            {greeting}, {userName}
           </motion.h1>
           
           <motion.p 
