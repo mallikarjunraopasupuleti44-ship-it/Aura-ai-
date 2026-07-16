@@ -1,19 +1,70 @@
 "use client";
 
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Upload, FileText, Folder, Search, MoreHorizontal, Database } from "lucide-react";
+import { BookOpen, Upload, FileText, Folder, Search, MoreVertical, Database, Trash2, Download, CheckCircle2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export default function KnowledgePage() {
-  const documents = [
-    { name: "Company_Brand_Guidelines.pdf", type: "pdf", size: "2.4 MB", date: "Today, 10:00 AM" },
-    { name: "Q3_Financial_Report.xlsx", type: "sheet", size: "1.1 MB", date: "Yesterday, 2:30 PM" },
-    { name: "Product_Roadmap_2026.docx", type: "doc", size: "840 KB", date: "Jul 12, 2026" },
-  ];
+  const [documents, setDocuments] = useState([
+    { id: 1, name: "Company_Brand_Guidelines.pdf", type: "pdf", size: "2.4 MB", date: "Today, 10:00 AM", folder: "Marketing Assets" },
+    { id: 2, name: "Q3_Financial_Report.xlsx", type: "sheet", size: "1.1 MB", date: "Yesterday, 2:30 PM", folder: "Financials" },
+    { id: 3, name: "Product_Roadmap_2026.docx", type: "doc", size: "840 KB", date: "Jul 12, 2026", folder: "Product Specs" },
+  ]);
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFolder, setActiveFolder] = useState<string>("All");
+  const [isUploading, setIsUploading] = useState(false);
+  const [activeMenu, setActiveMenu] = useState<number | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const folders = ['All', 'Marketing Assets', 'Legal Contracts', 'Product Specs', 'Financials'];
+
+  const filteredDocs = documents.filter(doc => 
+    doc.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
+    (activeFolder === 'All' || doc.folder === activeFolder)
+  );
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      setIsUploading(true);
+      
+      // Simulate network upload
+      setTimeout(() => {
+        const newDoc = {
+          id: Date.now(),
+          name: file.name,
+          type: file.name.split('.').pop() || "unknown",
+          size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
+          date: "Just now",
+          folder: activeFolder === 'All' ? "Marketing Assets" : activeFolder
+        };
+        setDocuments(prev => [newDoc, ...prev]);
+        setIsUploading(false);
+      }, 1500);
+    }
+  };
+
+  const deleteDoc = (id: number) => {
+    setDocuments(prev => prev.filter(d => d.id !== id));
+    setActiveMenu(null);
+  };
+
+  // Calculate fake storage based on docs
+  const totalBaseMB = 24.5;
+  const currentTotalMB = (totalBaseMB + (documents.length - 3) * 1.5).toFixed(1);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-6xl mx-auto space-y-8" onClick={() => setActiveMenu(null)}>
+      {/* Hidden file input */}
+      <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
@@ -21,8 +72,18 @@ export default function KnowledgePage() {
           <p className="text-[#0A121A]/60 font-medium">Train your AI workforce by uploading company documents and data.</p>
         </motion.div>
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Button className="rounded-xl h-12 px-6 bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF] hover:opacity-90 text-white font-bold shadow-[0_10px_30px_rgba(79,124,255,0.3)] transition-all transform hover:-translate-y-0.5 border-0">
-            <Upload className="w-5 h-5 mr-2" /> Upload Data
+          <Button 
+            onClick={handleUploadClick}
+            disabled={isUploading}
+            className="rounded-xl h-12 px-6 bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF] hover:opacity-90 text-white font-bold shadow-[0_10px_30px_rgba(79,124,255,0.3)] transition-all transform hover:-translate-y-0.5 border-0 disabled:opacity-70 disabled:transform-none"
+          >
+            {isUploading ? (
+              <span className="flex items-center gap-2">
+                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Uploading...
+              </span>
+            ) : (
+              <><Upload className="w-5 h-5 mr-2" /> Upload Data</>
+            )}
           </Button>
         </motion.div>
       </div>
@@ -35,13 +96,15 @@ export default function KnowledgePage() {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.2 }}
-            className="bg-white/40 backdrop-blur-3xl rounded-[20px] border border-white/60 p-2 flex items-center shadow-sm"
+            className="bg-white/40 backdrop-blur-3xl rounded-[20px] border border-white/60 p-2 flex items-center shadow-sm focus-within:border-[#4F7CFF] focus-within:ring-2 focus-within:ring-[#4F7CFF]/10 transition-all"
           >
             <div className="pl-4 pr-2 text-[#0A121A]/40">
               <Search className="w-5 h-5" />
             </div>
             <input 
               type="text" 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search documents, folders, or content..." 
               className="flex-1 bg-transparent border-none outline-none py-2 px-2 text-[#0A121A] font-medium placeholder:text-[#0A121A]/40"
             />
@@ -52,26 +115,83 @@ export default function KnowledgePage() {
             initial={{ opacity: 0, y: 20 }} 
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.3 }}
-            className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-6 shadow-[0_20px_40px_rgba(79,124,255,0.05)]"
+            className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-6 shadow-[0_20px_40px_rgba(79,124,255,0.05)] min-h-[400px]"
           >
-            <h3 className="text-lg font-bold text-[#0A121A] mb-4">Recent Documents</h3>
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-lg font-bold text-[#0A121A]">
+                {activeFolder === 'All' ? 'Recent Documents' : `${activeFolder} Documents`}
+              </h3>
+              <span className="text-sm font-bold text-[#4F7CFF] bg-[#4F7CFF]/10 px-3 py-1 rounded-full">{filteredDocs.length} Files</span>
+            </div>
+
             <div className="space-y-3">
-              {documents.map((doc, idx) => (
-                <div key={idx} className="group flex items-center justify-between p-4 rounded-[16px] border border-[#0A121A]/5 hover:bg-white hover:shadow-sm transition-all cursor-pointer">
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-[#4F7CFF]/10 flex items-center justify-center border border-[#4F7CFF]/20 group-hover:bg-[#4F7CFF] group-hover:border-transparent transition-colors">
-                      <FileText className="w-6 h-6 text-[#4F7CFF] group-hover:text-white transition-colors" />
+              <AnimatePresence>
+                {filteredDocs.length === 0 ? (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-12 text-center">
+                    <div className="w-16 h-16 bg-[#0A121A]/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Search className="w-8 h-8 text-[#0A121A]/30" />
                     </div>
-                    <div>
-                      <h4 className="font-bold text-[#0A121A] text-sm group-hover:text-[#4F7CFF] transition-colors">{doc.name}</h4>
-                      <p className="text-xs text-[#0A121A]/50 mt-0.5 font-medium">{doc.size} • Uploaded {doc.date}</p>
-                    </div>
-                  </div>
-                  <button className="p-2 text-[#0A121A]/30 hover:text-[#4F7CFF] rounded-lg hover:bg-[#4F7CFF]/10 transition-colors">
-                    <MoreHorizontal className="w-5 h-5" />
-                  </button>
-                </div>
-              ))}
+                    <p className="text-[#0A121A]/50 font-bold">No documents found.</p>
+                  </motion.div>
+                ) : (
+                  filteredDocs.map((doc) => (
+                    <motion.div 
+                      key={doc.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      layout
+                      className="group relative flex items-center justify-between p-4 rounded-[16px] border border-[#0A121A]/5 bg-white/40 hover:bg-white hover:shadow-sm hover:border-[#4F7CFF]/30 transition-all cursor-pointer"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-[#4F7CFF]/10 flex items-center justify-center border border-[#4F7CFF]/20 group-hover:bg-[#4F7CFF] group-hover:border-transparent group-hover:shadow-[0_4px_15px_rgba(79,124,255,0.4)] transition-all">
+                          <FileText className="w-6 h-6 text-[#4F7CFF] group-hover:text-white transition-colors" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-[#0A121A] text-sm group-hover:text-[#4F7CFF] transition-colors">{doc.name}</h4>
+                          <p className="text-xs text-[#0A121A]/50 mt-0.5 font-medium flex items-center gap-2">
+                            {doc.size} • Uploaded {doc.date}
+                            <span className="w-1 h-1 rounded-full bg-[#0A121A]/20" />
+                            <span className="text-[#0A121A]/40">{doc.folder}</span>
+                          </p>
+                        </div>
+                      </div>
+                      
+                      {/* Action Menu */}
+                      <div className="relative">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setActiveMenu(activeMenu === doc.id ? null : doc.id); }}
+                          className="p-2 text-[#0A121A]/30 hover:text-[#4F7CFF] rounded-lg hover:bg-[#4F7CFF]/10 transition-colors focus:outline-none"
+                        >
+                          <MoreVertical className="w-5 h-5" />
+                        </button>
+                        
+                        <AnimatePresence>
+                          {activeMenu === doc.id && (
+                            <motion.div 
+                              initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                              animate={{ opacity: 1, scale: 1, y: 0 }}
+                              exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                              className="absolute right-0 top-full mt-2 w-40 bg-white border border-white/60 shadow-[0_10px_40px_rgba(0,0,0,0.1)] rounded-xl py-1 z-20 overflow-hidden"
+                            >
+                              <button className="w-full px-4 py-2 text-left text-sm font-medium text-[#0A121A]/70 hover:bg-[#4F7CFF]/10 hover:text-[#4F7CFF] flex items-center gap-2">
+                                <Download className="w-4 h-4" /> Download
+                              </button>
+                              <div className="h-px bg-[#0A121A]/5 my-1" />
+                              <button 
+                                onClick={(e) => { e.stopPropagation(); deleteDoc(doc.id); }}
+                                className="w-full px-4 py-2 text-left text-sm font-medium text-[#FF6B81] hover:bg-[#FF6B81]/10 flex items-center gap-2"
+                              >
+                                <Trash2 className="w-4 h-4" /> Delete
+                              </button>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
         </div>
@@ -90,13 +210,18 @@ export default function KnowledgePage() {
             </h3>
             <div className="space-y-2">
               <div className="flex justify-between text-sm font-bold text-[#0A121A]">
-                <span>24.5 GB</span>
+                <span>{currentTotalMB} GB</span>
                 <span className="text-[#0A121A]/40">100 GB</span>
               </div>
               <div className="h-2 bg-[#0A121A]/5 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-[#4F7CFF] to-[#7B5CFF] rounded-full w-[24.5%]" />
+                <div 
+                  className="h-full bg-gradient-to-r from-[#4F7CFF] to-[#7B5CFF] rounded-full transition-all duration-1000" 
+                  style={{ width: `${(parseFloat(currentTotalMB) / 100) * 100}%` }}
+                />
               </div>
-              <p className="text-xs text-[#0A121A]/50 font-medium">Your AI agents have access to 1,204 documents.</p>
+              <p className="text-xs text-[#0A121A]/50 font-medium pt-2">
+                Your AI agents have access to <strong className="text-[#4F7CFF]">{1201 + documents.length}</strong> documents.
+              </p>
             </div>
           </motion.div>
 
@@ -110,12 +235,27 @@ export default function KnowledgePage() {
             <h3 className="text-lg font-bold text-[#0A121A] mb-4 flex items-center gap-2">
               <Folder className="w-5 h-5 text-[#42D392]" /> Folders
             </h3>
-            <div className="space-y-2">
-              {['Marketing Assets', 'Legal Contracts', 'Product Specs', 'Financials'].map((folder, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/60 cursor-pointer transition-colors text-sm font-bold text-[#0A121A]/80 hover:text-[#4F7CFF]">
-                  <Folder className="w-4 h-4 text-[#0A121A]/40" /> {folder}
-                </div>
-              ))}
+            <div className="space-y-1">
+              {folders.map((folder, idx) => {
+                const isActive = activeFolder === folder;
+                return (
+                  <button 
+                    key={idx} 
+                    onClick={() => setActiveFolder(folder)}
+                    className={cn(
+                      "w-full flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all",
+                      isActive 
+                        ? "bg-[#4F7CFF] text-white shadow-md shadow-[#4F7CFF]/20" 
+                        : "hover:bg-white/60 text-[#0A121A]/70 hover:text-[#4F7CFF]"
+                    )}
+                  >
+                    <span className="text-sm font-bold flex items-center gap-3">
+                      <Folder className={cn("w-4 h-4", isActive ? "text-white" : "text-[#0A121A]/40")} /> {folder}
+                    </span>
+                    {isActive && <CheckCircle2 className="w-4 h-4 opacity-70" />}
+                  </button>
+                );
+              })}
             </div>
           </motion.div>
         </div>
