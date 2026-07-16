@@ -35,7 +35,7 @@ export default function AutomationPage() {
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          { label: "Active Workflows", value: workflows.filter(w=>w.status === 'Active').length.toString(), icon: GitMerge, color: "text-[#4F7CFF]", bg: "bg-[#4F7CFF]/10", border: "border-[#4F7CFF]/30" },
+          { label: "Active Workflows", value: "3", icon: GitMerge, color: "text-[#4F7CFF]", bg: "bg-[#4F7CFF]/10", border: "border-[#4F7CFF]/30" },
           { label: "Tasks Automated (24h)", value: "1,249", icon: Zap, color: "text-[#7B5CFF]", bg: "bg-[#7B5CFF]/10", border: "border-[#7B5CFF]/30" },
           { label: "Hours Saved (Month)", value: "148h", icon: Clock, color: "text-[#42D392]", bg: "bg-[#42D392]/10", border: "border-[#42D392]/30" },
         ].map((stat, idx) => {
