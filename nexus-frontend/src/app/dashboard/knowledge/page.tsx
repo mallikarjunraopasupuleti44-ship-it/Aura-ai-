@@ -3,6 +3,7 @@
 import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/GlassCard";
 import { BookOpen, Upload, FileText, Folder, Search, MoreVertical, Database, Trash2, Download, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -61,95 +62,92 @@ export default function KnowledgePage() {
   const currentTotalMB = (totalBaseMB + (documents.length - 3) * 1.5).toFixed(1);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8" onClick={() => setActiveMenu(null)}>
+    <div className="max-w-[1400px] mx-auto space-y-8 pb-12" onClick={() => setActiveMenu(null)}>
       {/* Hidden file input */}
       <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" />
 
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-          <h1 className="text-3xl font-bold text-[#0A121A] mb-1 tracking-tight">Knowledge Base</h1>
-          <p className="text-[#0A121A]/60 font-medium">Train your AI workforce by uploading company documents and data.</p>
-        </motion.div>
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <Button 
-            onClick={handleUploadClick}
-            disabled={isUploading}
-            className="rounded-xl h-12 px-6 bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF] hover:opacity-90 text-white font-bold shadow-[0_10px_30px_rgba(79,124,255,0.3)] transition-all transform hover:-translate-y-0.5 border-0 disabled:opacity-70 disabled:transform-none"
-          >
-            {isUploading ? (
-              <span className="flex items-center gap-2">
-                <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Uploading...
-              </span>
-            ) : (
-              <><Upload className="w-5 h-5 mr-2" /> Upload Data</>
-            )}
-          </Button>
-        </motion.div>
-      </div>
+      <GlassCard className="p-8 md:p-12 border-white/60 relative overflow-hidden">
+        <div className="absolute top-[-50%] right-[-10%] w-[40%] h-[150%] bg-[#2FD9FF]/5 blur-[120px] rounded-full pointer-events-none" />
+        
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div>
+            <h1 className="text-4xl font-bold text-[#0A121A] mb-3 tracking-tight">Knowledge Base</h1>
+            <p className="text-[#0A121A]/60 font-medium text-lg max-w-xl">
+              Train your AI workforce by securely uploading company documents and proprietary data.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button 
+              onClick={handleUploadClick}
+              disabled={isUploading}
+              className="rounded-2xl h-14 px-8 text-lg font-bold shadow-[0_10px_20px_rgba(79,124,255,0.2)] disabled:opacity-70 disabled:transform-none"
+            >
+              {isUploading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" /> Uploading...
+                </span>
+              ) : (
+                <><Upload className="w-5 h-5 mr-2" /> Upload Data</>
+              )}
+            </Button>
+          </div>
+        </div>
+      </GlassCard>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
           {/* Search */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.2 }}
-            className="bg-white/40 backdrop-blur-3xl rounded-[20px] border border-white/60 p-2 flex items-center shadow-sm focus-within:border-[#4F7CFF] focus-within:ring-2 focus-within:ring-[#4F7CFF]/10 transition-all"
-          >
+          <GlassCard className="p-2 flex items-center shadow-sm focus-within:border-[#4F7CFF] transition-all">
             <div className="pl-4 pr-2 text-[#0A121A]/40">
-              <Search className="w-5 h-5" />
+              <Search className="w-6 h-6" />
             </div>
             <input 
               type="text" 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search documents, folders, or content..." 
-              className="flex-1 bg-transparent border-none outline-none py-2 px-2 text-[#0A121A] font-medium placeholder:text-[#0A121A]/40"
+              className="flex-1 bg-transparent border-none outline-none py-3 px-2 text-[#0A121A] text-lg font-medium placeholder:text-[#0A121A]/40"
             />
-          </motion.div>
+          </GlassCard>
 
           {/* Files List */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.3 }}
-            className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-6 shadow-[0_20px_40px_rgba(79,124,255,0.05)] min-h-[400px]"
-          >
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-lg font-bold text-[#0A121A]">
+          <GlassCard className="p-8 md:p-10 min-h-[500px]">
+            <div className="flex justify-between items-center mb-8">
+              <h3 className="text-2xl font-bold text-[#0A121A] tracking-tight">
                 {activeFolder === 'All' ? 'Recent Documents' : `${activeFolder} Documents`}
               </h3>
-              <span className="text-sm font-bold text-[#4F7CFF] bg-[#4F7CFF]/10 px-3 py-1 rounded-full">{filteredDocs.length} Files</span>
+              <span className="text-sm font-bold text-[#4F7CFF] bg-[#4F7CFF]/10 px-4 py-1.5 rounded-full border border-[#4F7CFF]/20">{filteredDocs.length} Files</span>
             </div>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
               <AnimatePresence>
                 {filteredDocs.length === 0 ? (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-12 text-center">
-                    <div className="w-16 h-16 bg-[#0A121A]/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Search className="w-8 h-8 text-[#0A121A]/30" />
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center">
+                    <div className="w-20 h-20 bg-[#0A121A]/5 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                      <Search className="w-10 h-10 text-[#0A121A]/30" />
                     </div>
-                    <p className="text-[#0A121A]/50 font-bold">No documents found.</p>
+                    <p className="text-[#0A121A]/50 font-bold text-lg">No documents found.</p>
                   </motion.div>
                 ) : (
-                  filteredDocs.map((doc) => (
+                  filteredDocs.map((doc, idx) => (
                     <motion.div 
                       key={doc.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
+                      transition={{ delay: 0.05 * idx }}
                       layout
-                      className="group relative flex items-center justify-between p-4 rounded-[16px] border border-[#0A121A]/5 bg-white/40 hover:bg-white hover:shadow-sm hover:border-[#4F7CFF]/30 transition-all cursor-pointer"
+                      className="group relative flex items-center justify-between p-5 rounded-2xl border border-white/60 bg-white/40 hover:bg-white hover:shadow-[0_10px_30px_rgba(79,124,255,0.08)] hover:border-[#4F7CFF]/30 transition-all cursor-pointer"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-xl bg-[#4F7CFF]/10 flex items-center justify-center border border-[#4F7CFF]/20 group-hover:bg-[#4F7CFF] group-hover:border-transparent group-hover:shadow-[0_4px_15px_rgba(79,124,255,0.4)] transition-all">
-                          <FileText className="w-6 h-6 text-[#4F7CFF] group-hover:text-white transition-colors" />
+                      <div className="flex items-center gap-5">
+                        <div className="w-14 h-14 rounded-xl bg-[#4F7CFF]/10 flex items-center justify-center border border-[#4F7CFF]/20 group-hover:bg-[#4F7CFF] group-hover:border-transparent group-hover:shadow-[0_4px_15px_rgba(79,124,255,0.4)] transition-all">
+                          <FileText className="w-7 h-7 text-[#4F7CFF] group-hover:text-white transition-colors" />
                         </div>
                         <div>
-                          <h4 className="font-bold text-[#0A121A] text-sm group-hover:text-[#4F7CFF] transition-colors">{doc.name}</h4>
-                          <p className="text-xs text-[#0A121A]/50 mt-0.5 font-medium flex items-center gap-2">
+                          <h4 className="font-bold text-[#0A121A] text-lg tracking-tight group-hover:text-[#4F7CFF] transition-colors">{doc.name}</h4>
+                          <p className="text-sm text-[#0A121A]/50 mt-1 font-medium flex items-center gap-2">
                             {doc.size} • Uploaded {doc.date}
                             <span className="w-1 h-1 rounded-full bg-[#0A121A]/20" />
                             <span className="text-[#0A121A]/40">{doc.folder}</span>
@@ -161,9 +159,9 @@ export default function KnowledgePage() {
                       <div className="relative">
                         <button 
                           onClick={(e) => { e.stopPropagation(); setActiveMenu(activeMenu === doc.id ? null : doc.id); }}
-                          className="p-2 text-[#0A121A]/30 hover:text-[#4F7CFF] rounded-lg hover:bg-[#4F7CFF]/10 transition-colors focus:outline-none"
+                          className="p-3 text-[#0A121A]/30 hover:text-[#4F7CFF] rounded-xl hover:bg-[#4F7CFF]/10 transition-colors focus:outline-none"
                         >
-                          <MoreVertical className="w-5 h-5" />
+                          <MoreVertical className="w-6 h-6" />
                         </button>
                         
                         <AnimatePresence>
@@ -172,15 +170,15 @@ export default function KnowledgePage() {
                               initial={{ opacity: 0, scale: 0.95, y: -10 }}
                               animate={{ opacity: 1, scale: 1, y: 0 }}
                               exit={{ opacity: 0, scale: 0.95, y: -10 }}
-                              className="absolute right-0 top-full mt-2 w-40 bg-white border border-white/60 shadow-[0_10px_40px_rgba(0,0,0,0.1)] rounded-xl py-1 z-20 overflow-hidden"
+                              className="absolute right-0 top-full mt-2 w-48 bg-white/90 backdrop-blur-md border border-white/60 shadow-[0_20px_60px_rgba(0,0,0,0.15)] rounded-2xl py-2 z-20 overflow-hidden"
                             >
-                              <button className="w-full px-4 py-2 text-left text-sm font-medium text-[#0A121A]/70 hover:bg-[#4F7CFF]/10 hover:text-[#4F7CFF] flex items-center gap-2">
+                              <button className="w-full px-5 py-3 text-left text-sm font-bold text-[#0A121A]/70 hover:bg-[#4F7CFF]/10 hover:text-[#4F7CFF] flex items-center gap-3 transition-colors">
                                 <Download className="w-4 h-4" /> Download
                               </button>
                               <div className="h-px bg-[#0A121A]/5 my-1" />
                               <button 
                                 onClick={(e) => { e.stopPropagation(); deleteDoc(doc.id); }}
-                                className="w-full px-4 py-2 text-left text-sm font-medium text-[#FF6B81] hover:bg-[#FF6B81]/10 flex items-center gap-2"
+                                className="w-full px-5 py-3 text-left text-sm font-bold text-[#FF6B81] hover:bg-[#FF6B81]/10 flex items-center gap-3 transition-colors"
                               >
                                 <Trash2 className="w-4 h-4" /> Delete
                               </button>
@@ -193,49 +191,39 @@ export default function KnowledgePage() {
                 )}
               </AnimatePresence>
             </div>
-          </motion.div>
+          </GlassCard>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Storage Info */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.4 }}
-            className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-6 shadow-[0_20px_40px_rgba(79,124,255,0.05)]"
-          >
-            <h3 className="text-lg font-bold text-[#0A121A] mb-4 flex items-center gap-2">
-              <Database className="w-5 h-5 text-[#7B5CFF]" /> Storage
+          <GlassCard className="p-8">
+            <h3 className="text-xl font-bold text-[#0A121A] mb-6 flex items-center gap-3 tracking-tight">
+              <Database className="w-6 h-6 text-[#7B5CFF]" /> Storage Usage
             </h3>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm font-bold text-[#0A121A]">
+            <div className="space-y-3">
+              <div className="flex justify-between text-base font-bold text-[#0A121A]">
                 <span>{currentTotalMB} GB</span>
                 <span className="text-[#0A121A]/40">100 GB</span>
               </div>
-              <div className="h-2 bg-[#0A121A]/5 rounded-full overflow-hidden">
+              <div className="h-3 bg-[#0A121A]/5 rounded-full overflow-hidden border border-white/40">
                 <div 
                   className="h-full bg-gradient-to-r from-[#4F7CFF] to-[#7B5CFF] rounded-full transition-all duration-1000" 
                   style={{ width: `${(parseFloat(currentTotalMB) / 100) * 100}%` }}
                 />
               </div>
-              <p className="text-xs text-[#0A121A]/50 font-medium pt-2">
-                Your AI agents have access to <strong className="text-[#4F7CFF]">{1201 + documents.length}</strong> documents.
+              <p className="text-sm text-[#0A121A]/50 font-medium pt-3 leading-relaxed">
+                Your AI agents have access to <strong className="text-[#4F7CFF] bg-[#4F7CFF]/10 px-2 py-0.5 rounded">{1201 + documents.length}</strong> documents.
               </p>
             </div>
-          </motion.div>
+          </GlassCard>
 
           {/* Folders */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ delay: 0.5 }}
-            className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-6 shadow-[0_20px_40px_rgba(79,124,255,0.05)]"
-          >
-            <h3 className="text-lg font-bold text-[#0A121A] mb-4 flex items-center gap-2">
-              <Folder className="w-5 h-5 text-[#42D392]" /> Folders
+          <GlassCard className="p-8">
+            <h3 className="text-xl font-bold text-[#0A121A] mb-6 flex items-center gap-3 tracking-tight">
+              <Folder className="w-6 h-6 text-[#42D392]" /> Directories
             </h3>
-            <div className="space-y-1">
+            <div className="space-y-2">
               {folders.map((folder, idx) => {
                 const isActive = activeFolder === folder;
                 return (
@@ -243,21 +231,21 @@ export default function KnowledgePage() {
                     key={idx} 
                     onClick={() => setActiveFolder(folder)}
                     className={cn(
-                      "w-full flex items-center justify-between p-3 rounded-xl cursor-pointer transition-all",
+                      "w-full flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all",
                       isActive 
-                        ? "bg-[#4F7CFF] text-white shadow-md shadow-[#4F7CFF]/20" 
-                        : "hover:bg-white/60 text-[#0A121A]/70 hover:text-[#4F7CFF]"
+                        ? "bg-[#4F7CFF] text-white shadow-lg shadow-[#4F7CFF]/20" 
+                        : "hover:bg-white/80 text-[#0A121A]/70 hover:text-[#4F7CFF] border border-transparent hover:border-white/60"
                     )}
                   >
-                    <span className="text-sm font-bold flex items-center gap-3">
-                      <Folder className={cn("w-4 h-4", isActive ? "text-white" : "text-[#0A121A]/40")} /> {folder}
+                    <span className="text-base font-bold flex items-center gap-3">
+                      <Folder className={cn("w-5 h-5", isActive ? "text-white" : "text-[#0A121A]/40")} /> {folder}
                     </span>
-                    {isActive && <CheckCircle2 className="w-4 h-4 opacity-70" />}
+                    {isActive && <CheckCircle2 className="w-5 h-5 opacity-70" />}
                   </button>
                 );
               })}
             </div>
-          </motion.div>
+          </GlassCard>
         </div>
       </div>
     </div>

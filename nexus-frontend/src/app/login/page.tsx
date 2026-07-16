@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { AuraLogo } from "@/components/ui/logo";
+import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Mail } from "lucide-react";
@@ -47,12 +47,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex w-full relative overflow-hidden bg-[#FCFDFF]">
-      <div className="absolute inset-0 aurora-bg opacity-40 mix-blend-multiply pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-tr from-[#4F7CFF]/5 to-[#7B5CFF]/5 opacity-40 mix-blend-multiply pointer-events-none" />
 
       {/* Left Panel: Branding & Animation */}
       <div className="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12">
         <div className="relative z-10 flex flex-col items-center">
-          <AuraLogo size="xl" className="mb-12" />
+          <AnimatedLogo size="xl" withText={true} className="mb-12" />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

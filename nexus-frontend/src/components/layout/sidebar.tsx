@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { AuraLogo } from "@/components/ui/logo";
+import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { 
   LayoutDashboard, 
   Users, 
@@ -39,13 +39,10 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-[280px] h-[calc(100vh-2rem)] fixed top-4 left-4 z-40 flex flex-col pt-6 pb-6 aurora-glass shadow-[0_20px_80px_rgba(120,130,255,0.08)]">
+    <aside className="w-[280px] h-[calc(100vh-2rem)] fixed top-4 left-4 z-40 flex flex-col pt-8 pb-6 aurora-glass">
       {/* Logo Area */}
-      <Link href="/dashboard" className="flex items-center gap-3 px-6 mb-10 group">
-        <AuraLogo size="sm" />
-        <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF]">
-          Aura AI
-        </span>
+      <Link href="/dashboard" className="flex items-center gap-3 px-6 mb-12 group">
+        <AnimatedLogo size="md" withText={true} />
       </Link>
 
       {/* Main Navigation */}
@@ -59,7 +56,7 @@ export function Sidebar() {
             <Link key={item.name} href={item.href} className="block relative group/navitem">
               <div className={cn(
                 "flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-300 relative z-10",
-                isActive ? "text-[#4F7CFF] font-medium" : "text-[#0A121A]/60 hover:text-[#0A121A]"
+                isActive ? "text-[#4F7CFF] font-medium" : "text-[#0A121A]/60 group-hover/navitem:text-[#4F7CFF]"
               )}>
                 <Icon className={cn("w-5 h-5 transition-transform duration-300 group-hover/navitem:scale-110", isActive ? "text-[#4F7CFF]" : "")} />
                 {item.name}
@@ -68,9 +65,12 @@ export function Sidebar() {
               {isActive && (
                 <motion.div
                   layoutId="active-sidebar-tab"
-                  className="absolute inset-0 bg-white/50 backdrop-blur-md border border-white/60 rounded-2xl shadow-[0_4px_20px_rgba(79,124,255,0.08)] -z-0"
+                  className="absolute inset-0 bg-gradient-to-r from-[#4F7CFF]/10 to-[#2FD9FF]/10 backdrop-blur-md border border-[#4F7CFF]/20 rounded-2xl shadow-[0_0_20px_rgba(79,124,255,0.15)] -z-0"
                   transition={{ type: "spring", stiffness: 400, damping: 30 }}
                 />
+              )}
+              {!isActive && (
+                <div className="absolute inset-0 bg-[#4F7CFF]/0 group-hover/navitem:bg-[#4F7CFF]/5 rounded-2xl transition-colors duration-300 -z-0" />
               )}
             </Link>
           );

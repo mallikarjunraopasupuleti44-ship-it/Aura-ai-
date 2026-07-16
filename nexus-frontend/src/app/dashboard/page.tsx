@@ -1,15 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { AuraLogo } from "@/components/ui/logo";
+import { motion, AnimatePresence } from "framer-motion";
+import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/GlassCard";
-import Link from "next/link";
 import { 
   CheckCircle2, ShieldCheck, Zap, Database, Bot,
   FileText, Megaphone, TrendingUp, Search, UploadCloud, PieChart, Headphones,
-  Mail, Edit3, Settings
+  Mail, Edit3, Settings, Loader2
 } from "lucide-react";
 
 function getGreeting(): string {
@@ -23,6 +22,8 @@ function getGreeting(): string {
 export default function DashboardPage() {
   const [userName, setUserName] = useState("there");
   const [greeting, setGreeting] = useState("Welcome");
+  const [activeWorkflow, setActiveWorkflow] = useState<string | null>(null);
+  const [workflowProgress, setWorkflowProgress] = useState(0);
 
   useEffect(() => {
     setGreeting(getGreeting());
@@ -42,6 +43,25 @@ export default function DashboardPage() {
       }
     }
   }, []);
+
+  // Simulate an AI workflow when a quick action is clicked
+  const handleWorkflowStart = (title: string) => {
+    setActiveWorkflow(title);
+    setWorkflowProgress(0);
+    
+    let progress = 0;
+    const interval = setInterval(() => {
+      progress += Math.floor(Math.random() * 15) + 5;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(interval);
+        setTimeout(() => {
+          setActiveWorkflow(null);
+        }, 1000);
+      }
+      setWorkflowProgress(progress);
+    }, 400);
+  };
 
   const statusBadges = [
     { label: "Business Ready", icon: CheckCircle2, color: "text-[#42D392]" },
@@ -67,14 +87,19 @@ export default function DashboardPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-12 pb-12">
       {/* Top Hero Section */}
-      <GlassCard glow="blue" hover="none" animate={true} delay={0} className="p-10 flex flex-col items-center text-center mt-4 border-white/60">
-        <div className="relative z-10 flex flex-col items-center">
-          <AuraLogo size="lg" className="mb-8" />
+      <GlassCard glow="blue" hover="none" animate={true} delay={0} className="p-10 flex flex-col items-center text-center mt-4 border-white/60 relative overflow-hidden">
+        
+        {/* Decorative background blurs inside hero */}
+        <div className="absolute top-[-50%] left-[-10%] w-[60%] h-[150%] bg-[#4F7CFF]/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="absolute bottom-[-50%] right-[-10%] w-[60%] h-[150%] bg-[#2FD9FF]/5 blur-[100px] rounded-full pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col items-center w-full">
+          <AnimatedLogo size="lg" withText={false} className="mb-8" />
           
           <motion.h1 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-bold text-[#0A121A] mb-2"
+            className="text-4xl font-bold text-[#0A121A] mb-2 tracking-tight"
           >
             {greeting}, {userName}
           </motion.h1>
@@ -83,9 +108,9 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-[#0A121A]/60 text-lg mb-8 max-w-xl"
+            className="text-[#0A121A]/60 text-lg mb-8 max-w-xl font-medium"
           >
-            Welcome back. Your AI Workforce is ready to help your business grow.
+            Your AI Business Operating System is online. Agents are standing by.
           </motion.p>
 
           <motion.div 
@@ -97,7 +122,7 @@ export default function DashboardPage() {
             {statusBadges.map((badge, idx) => {
               const Icon = badge.icon;
               return (
-                <div key={idx} className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/40 shadow-sm bg-white/40 backdrop-blur-md">
+                <div key={idx} className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/40 shadow-[0_4px_20px_rgba(79,124,255,0.05)] bg-white/40 backdrop-blur-md">
                   <Icon className={`w-4 h-4 ${badge.color}`} />
                   <span className="text-sm font-medium text-[#0A121A]/80">{badge.label}</span>
                 </div>
@@ -111,14 +136,11 @@ export default function DashboardPage() {
             transition={{ delay: 0.3 }}
             className="flex flex-wrap justify-center gap-4"
           >
-            <Button size="lg" onClick={() => window.location.href='/dashboard/start'} className="rounded-full px-8 text-base font-medium">
-              Launch AI
+            <Button size="lg" onClick={() => window.location.href='/dashboard/start'} className="rounded-full px-8 text-base font-medium h-14">
+              Deploy AI Workforce
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium">
-              Edit Business
-            </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium">
-              Generate Report
+            <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium h-14 bg-white/30 hover:bg-white/50">
+              System Settings
             </Button>
           </motion.div>
         </div>
@@ -127,10 +149,10 @@ export default function DashboardPage() {
       {/* Quick Actions */}
       <section>
         <div className="flex items-center justify-between mb-6 px-2">
-          <h2 className="text-2xl font-bold text-[#0A121A]">Quick Actions</h2>
+          <h2 className="text-2xl font-bold text-[#0A121A] tracking-tight">Quick Actions</h2>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
           {quickActions.map((action, idx) => {
             const Icon = action.icon;
             return (
@@ -139,20 +161,49 @@ export default function DashboardPage() {
                 glow={action.glow as any} 
                 hover="lift" 
                 animate={true} 
-                delay={0.1 * (idx % 4)}
-                className="p-5 group cursor-pointer"
-                onClick={() => {}}
+                delay={0.05 * idx}
+                className="p-5 group cursor-pointer transition-all"
+                onClick={() => handleWorkflowStart(action.title)}
               >
-                <div className="w-10 h-10 rounded-xl bg-white/50 border border-white/60 shadow-inner flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-white/80 to-white/30 border border-white/60 shadow-sm flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
                   <Icon className="w-5 h-5 text-[#4F7CFF]" />
                 </div>
-                <h3 className="font-semibold text-[#0A121A] mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4F7CFF] group-hover:to-[#7B5CFF] transition-all duration-300">{action.title}</h3>
-                <p className="text-sm text-[#0A121A]/60">{action.desc}</p>
+                <h3 className="font-semibold text-[#0A121A] mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4F7CFF] group-hover:to-[#7B5CFF] transition-all duration-300 text-sm leading-tight">{action.title}</h3>
+                <p className="text-xs text-[#0A121A]/50 line-clamp-2">{action.desc}</p>
               </GlassCard>
             );
           })}
         </div>
       </section>
+
+      {/* Simulated AI Workflow Overlay */}
+      <AnimatePresence>
+        {activeWorkflow && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#FCFDFF]/60 backdrop-blur-sm"
+          >
+            <GlassCard className="w-full max-w-md p-8 text-center" glow="blue">
+              <div className="relative w-20 h-20 mx-auto mb-6">
+                <AnimatedLogo size="lg" withText={false} />
+              </div>
+              <h3 className="text-xl font-bold text-[#0A121A] mb-2">{activeWorkflow}</h3>
+              <p className="text-[#0A121A]/60 mb-6">Agents are collaborating on this task...</p>
+              
+              <div className="w-full h-2 bg-white/50 rounded-full overflow-hidden border border-white/60">
+                <motion.div 
+                  className="h-full bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF]"
+                  animate={{ width: `${workflowProgress}%` }}
+                  transition={{ ease: "linear", duration: 0.4 }}
+                />
+              </div>
+              <div className="mt-2 text-sm font-medium text-[#4F7CFF]">{workflowProgress}% Complete</div>
+            </GlassCard>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

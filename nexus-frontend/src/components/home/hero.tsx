@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { AuraLogo } from "@/components/ui/logo";
+import { AnimatedLogo } from "@/components/ui/AnimatedLogo";
 import { Button } from "@/components/ui/button";
 import { Play, ArrowRight, ShieldCheck, Zap, Code2, Building2 } from "lucide-react";
 import Link from "next/link";
@@ -39,6 +39,7 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen pt-32 pb-20 flex flex-col items-center justify-center">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-[800px] h-[800px] bg-gradient-to-r from-[#4F7CFF]/10 to-[#7B5CFF]/10 blur-[150px] rounded-full pointer-events-none -z-10" />
       <div className="container px-6 flex flex-col items-center text-center max-w-5xl mx-auto z-10">
         
         {/* Animated Centered Logo */}
@@ -46,14 +47,9 @@ export function Hero() {
           initial={{ opacity: 0, scale: 0.8, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           transition={{ duration: 1.2, ease: "easeOut" }}
-          className="mb-10 relative flex justify-center items-center"
+          className="mb-12 relative flex justify-center items-center w-32 h-32"
         >
-          <motion.div 
-            className="absolute inset-[-40%] rounded-full border border-[#4F7CFF]/20 border-dashed"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-          />
-          <AuraLogo size="lg" className="animate-float" />
+          <AnimatedLogo size="xl" withText={false} />
         </motion.div>
 
         {/* Small Badge */}
