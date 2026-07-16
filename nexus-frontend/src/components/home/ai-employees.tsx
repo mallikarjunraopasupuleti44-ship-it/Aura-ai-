@@ -10,16 +10,16 @@ const employees = [
     id: "planner",
     name: "Strategic Planner",
     role: "Operations",
-    icon: <Bot className="w-6 h-6 text-indigo-500" />,
+    icon: <Bot className="w-6 h-6 text-[#7B5CFF]" />,
     status: "Active",
-    color: "indigo",
+    color: "violet",
     tasks: ["Analyzing Q3 metrics", "Generating growth roadmap", "Assigning daily tasks"],
   },
   {
     id: "marketer",
     name: "Growth Marketer",
     role: "Marketing",
-    icon: <TrendingUp className="w-6 h-6 text-blue-500" />,
+    icon: <TrendingUp className="w-6 h-6 text-[#4F7CFF]" />,
     status: "Active",
     color: "blue",
     tasks: ["Optimizing ad spend", "A/B testing landing pages", "Drafting social posts"],
@@ -28,67 +28,71 @@ const employees = [
     id: "writer",
     name: "Content Creator",
     role: "Content",
-    icon: <PenTool className="w-6 h-6 text-purple-500" />,
+    icon: <PenTool className="w-6 h-6 text-[#2FD9FF]" />,
     status: "Active",
-    color: "purple",
+    color: "cyan",
     tasks: ["Writing blog post", "Creating newsletter", "Refining brand voice"],
   },
   {
     id: "sales",
     name: "Sales Agent",
     role: "Outreach",
-    icon: <Mail className="w-6 h-6 text-cyan-500" />,
+    icon: <Mail className="w-6 h-6 text-[#4F7CFF]" />,
     status: "Idle",
-    color: "cyan",
+    color: "blue",
     tasks: ["Following up leads", "Drafting cold emails", "Updating CRM"],
   },
   {
     id: "developer",
     name: "Tech Lead",
     role: "Engineering",
-    icon: <Code className="w-6 h-6 text-fuchsia-500" />,
+    icon: <Code className="w-6 h-6 text-[#7B5CFF]" />,
     status: "Active",
-    color: "fuchsia",
+    color: "violet",
     tasks: ["Deploying updates", "Fixing bugs", "Monitoring uptime"],
   },
 ];
 
 const getColorClasses = (color: string) => {
   const map: Record<string, string> = {
-    indigo: "from-indigo-500/20 to-blue-500/10 border-indigo-200/50 hover:border-indigo-400/50 shadow-indigo-500/10",
-    blue: "from-blue-500/20 to-cyan-500/10 border-blue-200/50 hover:border-blue-400/50 shadow-blue-500/10",
-    purple: "from-purple-500/20 to-fuchsia-500/10 border-purple-200/50 hover:border-purple-400/50 shadow-purple-500/10",
-    cyan: "from-cyan-500/20 to-blue-500/10 border-cyan-200/50 hover:border-cyan-400/50 shadow-cyan-500/10",
-    fuchsia: "from-fuchsia-500/20 to-purple-500/10 border-fuchsia-200/50 hover:border-fuchsia-400/50 shadow-fuchsia-500/10",
+    violet: "from-[#7B5CFF]/10 to-[#4F7CFF]/5 border-white/60 hover:border-[#7B5CFF]/40 shadow-[0_10px_40px_rgba(123,92,255,0.08)]",
+    blue: "from-[#4F7CFF]/10 to-[#2FD9FF]/5 border-white/60 hover:border-[#4F7CFF]/40 shadow-[0_10px_40px_rgba(79,124,255,0.08)]",
+    cyan: "from-[#2FD9FF]/10 to-[#4F7CFF]/5 border-white/60 hover:border-[#2FD9FF]/40 shadow-[0_10px_40px_rgba(47,217,255,0.08)]",
   };
-  return map[color] || map.indigo;
+  return map[color] || map.blue;
 };
 
 const getBadgeClasses = (color: string, status: string) => {
-  if (status !== "Active") return "bg-gray-100 text-gray-500 border-gray-200";
+  if (status !== "Active") return "bg-white/60 text-[#0A121A]/50 border-white/40";
   const map: Record<string, string> = {
-    indigo: "bg-indigo-100 text-indigo-700 border-indigo-200",
-    blue: "bg-blue-100 text-blue-700 border-blue-200",
-    purple: "bg-purple-100 text-purple-700 border-purple-200",
-    cyan: "bg-cyan-100 text-cyan-700 border-cyan-200",
-    fuchsia: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-200",
+    violet: "bg-[#7B5CFF]/10 text-[#7B5CFF] border-[#7B5CFF]/20",
+    blue: "bg-[#4F7CFF]/10 text-[#4F7CFF] border-[#4F7CFF]/20",
+    cyan: "bg-[#2FD9FF]/10 text-[#0A121A] border-[#2FD9FF]/30",
   };
-  return map[color] || map.indigo;
+  return map[color] || map.blue;
+};
+
+const getIconColor = (color: string) => {
+  const map: Record<string, string> = {
+    violet: "text-[#7B5CFF]",
+    blue: "text-[#4F7CFF]",
+    cyan: "text-[#2FD9FF]",
+  };
+  return map[color] || map.blue;
 };
 
 export function AIEmployees() {
   return (
-    <section id="ai-employees" className="relative py-32 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-50/30 to-transparent -z-10" />
+    <section id="ai-employees" className="relative py-32 overflow-hidden bg-[#FCFDFF]">
       
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-6 relative z-10">
         <div className="text-center mb-20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-100 text-blue-700 text-sm font-medium mb-6"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/40 backdrop-blur-md border border-white/60 text-[#4F7CFF] text-sm font-bold mb-6 shadow-sm"
           >
             <Sparkles className="w-4 h-4" /> Meet Your Team
           </motion.div>
@@ -97,7 +101,7 @@ export function AIEmployees() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-6"
+            className="text-4xl md:text-6xl font-bold tracking-tight text-[#0A121A] mb-6"
           >
             An entire company,<br/> working for you 24/7.
           </motion.h2>
@@ -106,7 +110,7 @@ export function AIEmployees() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg text-gray-600 max-w-2xl mx-auto"
+            className="text-xl text-[#0A121A]/60 max-w-2xl mx-auto font-medium leading-relaxed"
           >
             Aura AI doesn't just give you tools. It gives you a dedicated team of autonomous AI agents that collaborate to scale your business.
           </motion.p>
@@ -120,21 +124,21 @@ export function AIEmployees() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              whileHover={{ y: -10 }}
+              whileHover={{ y: -8 }}
               className={cn(
-                "group relative glass-card p-8 bg-gradient-to-br transition-all duration-500 overflow-hidden",
+                "group relative bg-white/40 backdrop-blur-3xl rounded-[24px] p-8 bg-gradient-to-br transition-all duration-500 overflow-hidden border",
                 getColorClasses(employee.color)
               )}
             >
               {/* Background glow on hover */}
-              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-white/20 transition-opacity duration-500" />
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-white/40 transition-opacity duration-500" />
               
               <div className="relative z-10">
-                <div className="flex justify-between items-start mb-6">
-                  <div className="w-14 h-14 rounded-2xl bg-white/80 border border-white flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
+                <div className="flex justify-between items-start mb-8">
+                  <div className="w-14 h-14 rounded-2xl bg-white/80 backdrop-blur-md border border-white/60 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-500">
                     {employee.icon}
                   </div>
-                  <div className={cn("px-3 py-1 rounded-full text-xs font-semibold border flex items-center gap-1.5", getBadgeClasses(employee.color, employee.status))}>
+                  <div className={cn("px-4 py-1.5 rounded-full text-xs font-bold border flex items-center gap-2", getBadgeClasses(employee.color, employee.status))}>
                     {employee.status === "Active" && (
                       <span className="relative flex h-2 w-2">
                         <span className={cn("animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 bg-current")} />
@@ -145,23 +149,23 @@ export function AIEmployees() {
                   </div>
                 </div>
 
-                <div className="mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{employee.name}</h3>
-                  <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">{employee.role}</p>
+                <div className="mb-8">
+                  <h3 className="text-2xl font-bold text-[#0A121A] mb-1">{employee.name}</h3>
+                  <p className="text-sm font-bold text-[#0A121A]/40 uppercase tracking-widest">{employee.role}</p>
                 </div>
 
                 <div className="space-y-3">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Current Tasks</p>
+                  <p className="text-xs font-bold text-[#0A121A]/40 uppercase tracking-widest mb-3">Current Tasks</p>
                   {employee.tasks.map((task, i) => (
                     <motion.div 
                       key={i} 
-                      className="flex items-center gap-3 text-sm text-gray-700 bg-white/50 border border-white/40 rounded-lg p-2.5"
+                      className="flex items-center gap-3 text-sm text-[#0A121A]/80 bg-white/60 backdrop-blur-md border border-white/60 rounded-xl p-3.5 shadow-sm transition-colors group-hover:bg-white/80"
                       initial={{ x: -10, opacity: 0 }}
                       whileInView={{ x: 0, opacity: 1 }}
                       transition={{ delay: 0.3 + (i * 0.1) }}
                     >
-                      <CheckCircle2 className={cn("w-4 h-4", i === 0 && employee.status === "Active" ? `text-${employee.color}-500 animate-pulse` : "text-gray-300")} />
-                      <span className={i === 0 && employee.status === "Active" ? "font-medium" : ""}>{task}</span>
+                      <CheckCircle2 className={cn("w-4 h-4", i === 0 && employee.status === "Active" ? cn(getIconColor(employee.color), "animate-pulse") : "text-[#0A121A]/20")} />
+                      <span className={i === 0 && employee.status === "Active" ? "font-bold text-[#0A121A]" : "font-medium"}>{task}</span>
                     </motion.div>
                   ))}
                 </div>
@@ -175,14 +179,14 @@ export function AIEmployees() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="group relative glass-card p-8 bg-white/40 border-dashed border-2 border-gray-300 hover:border-indigo-400 flex flex-col items-center justify-center text-center cursor-pointer transition-all"
+            className="group relative bg-white/20 backdrop-blur-md rounded-[24px] p-8 border-dashed border-2 border-white/60 hover:border-[#4F7CFF]/50 hover:bg-white/40 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-500"
             onClick={() => window.location.href='/dashboard/employees'}
           >
-            <div className="w-16 h-16 rounded-full bg-gray-100 group-hover:bg-indigo-50 flex items-center justify-center mb-4 transition-colors">
-              <span className="text-3xl text-gray-400 group-hover:text-indigo-500 transition-colors">+</span>
+            <div className="w-16 h-16 rounded-full bg-white/60 border border-white/60 group-hover:bg-[#4F7CFF]/10 flex items-center justify-center mb-6 transition-colors duration-500 shadow-sm">
+              <span className="text-3xl text-[#0A121A]/30 group-hover:text-[#4F7CFF] transition-colors duration-500">+</span>
             </div>
-            <h3 className="text-lg font-bold text-gray-900 mb-2">Hire New Agent</h3>
-            <p className="text-sm text-gray-500 max-w-[200px]">Browse the marketplace for specialized AI employees.</p>
+            <h3 className="text-xl font-bold text-[#0A121A] mb-2">Hire New Agent</h3>
+            <p className="text-base text-[#0A121A]/60 max-w-[200px] font-medium leading-relaxed">Browse the marketplace for specialized AI employees.</p>
           </motion.div>
         </div>
       </div>

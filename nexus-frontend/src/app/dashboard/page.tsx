@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AuraLogo } from "@/components/ui/logo";
 import { Button } from "@/components/ui/button";
+import { GlassCard } from "@/components/ui/GlassCard";
 import Link from "next/link";
 import { 
   CheckCircle2, ShieldCheck, Zap, Database, Bot,
@@ -24,15 +25,12 @@ export default function DashboardPage() {
   const [greeting, setGreeting] = useState("Welcome");
 
   useEffect(() => {
-    // Set time-based greeting
     setGreeting(getGreeting());
 
-    // Get user name from localStorage (stored during login/signup)
     const storedName = localStorage.getItem("aura_user_name");
     if (storedName) {
       setUserName(storedName);
     } else {
-      // Try to decode from JWT token
       const token = localStorage.getItem("aura_token");
       if (token) {
         try {
@@ -40,47 +38,43 @@ export default function DashboardPage() {
           if (payload.name) {
             setUserName(payload.name);
           }
-        } catch (e) {
-          // Token decode failed, use default
-        }
+        } catch (e) {}
       }
     }
   }, []);
 
   const statusBadges = [
-    { label: "Business Ready", icon: CheckCircle2, color: "text-green-600", bg: "bg-green-50", border: "border-green-200" },
-    { label: "Knowledge Loaded", icon: Database, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-200" },
-    { label: "Agents Active", icon: Bot, color: "text-purple-600", bg: "bg-purple-50", border: "border-purple-200" },
-    { label: "Automation Ready", icon: Zap, color: "text-yellow-600", bg: "bg-yellow-50", border: "border-yellow-200" },
-    { label: "Secure Workspace", icon: ShieldCheck, color: "text-emerald-600", bg: "bg-emerald-50", border: "border-emerald-200" },
+    { label: "Business Ready", icon: CheckCircle2, color: "text-[#42D392]" },
+    { label: "Knowledge Loaded", icon: Database, color: "text-[#4F7CFF]" },
+    { label: "Agents Active", icon: Bot, color: "text-[#7B5CFF]" },
+    { label: "Automation Ready", icon: Zap, color: "text-[#F7B955]" },
+    { label: "Secure Workspace", icon: ShieldCheck, color: "text-[#2FD9FF]" },
   ];
 
   const quickActions = [
-    { title: "Generate Business Plan", icon: FileText, desc: "Create a comprehensive strategy." },
-    { title: "Marketing Strategy", icon: Megaphone, desc: "Plan campaigns and content." },
-    { title: "Revenue Analysis", icon: TrendingUp, desc: "Forecast and financial models." },
-    { title: "Research Competitors", icon: Search, desc: "Analyze market landscape." },
-    { title: "Upload Knowledge", icon: UploadCloud, desc: "Add PDFs, links, or text." },
-    { title: "Generate Reports", icon: PieChart, desc: "Weekly performance summaries." },
-    { title: "Business Automation", icon: Settings, desc: "Configure workflows." },
-    { title: "Customer Support", icon: Headphones, desc: "Train support agent." },
-    { title: "Email Automation", icon: Mail, desc: "Draft and schedule emails." },
-    { title: "Create Proposal", icon: Edit3, desc: "Client pitching documents." },
+    { title: "Generate Business Plan", icon: FileText, desc: "Create a comprehensive strategy.", glow: "blue" },
+    { title: "Marketing Strategy", icon: Megaphone, desc: "Plan campaigns and content.", glow: "violet" },
+    { title: "Revenue Analysis", icon: TrendingUp, desc: "Forecast and financial models.", glow: "cyan" },
+    { title: "Research Competitors", icon: Search, desc: "Analyze market landscape.", glow: "blue" },
+    { title: "Upload Knowledge", icon: UploadCloud, desc: "Add PDFs, links, or text.", glow: "violet" },
+    { title: "Generate Reports", icon: PieChart, desc: "Weekly performance summaries.", glow: "cyan" },
+    { title: "Business Automation", icon: Settings, desc: "Configure workflows.", glow: "blue" },
+    { title: "Customer Support", icon: Headphones, desc: "Train support agent.", glow: "violet" },
+    { title: "Email Automation", icon: Mail, desc: "Draft and schedule emails.", glow: "cyan" },
+    { title: "Create Proposal", icon: Edit3, desc: "Client pitching documents.", glow: "blue" },
   ];
 
   return (
     <div className="max-w-6xl mx-auto space-y-12 pb-12">
       {/* Top Hero Section */}
-      <section className="relative rounded-3xl overflow-hidden glass-card p-10 flex flex-col items-center text-center mt-4 border-white/80">
-        <div className="absolute inset-0 mesh-bg opacity-30" />
-        
+      <GlassCard glow="blue" hover="none" animate={true} delay={0} className="p-10 flex flex-col items-center text-center mt-4 border-white/60">
         <div className="relative z-10 flex flex-col items-center">
           <AuraLogo size="lg" className="mb-8" />
           
           <motion.h1 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-bold text-gray-900 mb-2"
+            className="text-4xl font-bold text-[#0A121A] mb-2"
           >
             {greeting}, {userName}
           </motion.h1>
@@ -89,7 +83,7 @@ export default function DashboardPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-gray-600 text-lg mb-8 max-w-xl"
+            className="text-[#0A121A]/60 text-lg mb-8 max-w-xl"
           >
             Welcome back. Your AI Workforce is ready to help your business grow.
           </motion.p>
@@ -103,9 +97,9 @@ export default function DashboardPage() {
             {statusBadges.map((badge, idx) => {
               const Icon = badge.icon;
               return (
-                <div key={idx} className={`flex items-center gap-2 px-4 py-2 rounded-full border ${badge.bg} ${badge.border} shadow-sm bg-white/50 backdrop-blur-sm`}>
+                <div key={idx} className="flex items-center gap-2 px-4 py-2 rounded-full border border-white/40 shadow-sm bg-white/40 backdrop-blur-md">
                   <Icon className={`w-4 h-4 ${badge.color}`} />
-                  <span className={`text-sm font-medium text-gray-800`}>{badge.label}</span>
+                  <span className="text-sm font-medium text-[#0A121A]/80">{badge.label}</span>
                 </div>
               );
             })}
@@ -117,43 +111,44 @@ export default function DashboardPage() {
             transition={{ delay: 0.3 }}
             className="flex flex-wrap justify-center gap-4"
           >
-            <Button size="lg" onClick={() => window.location.href='/dashboard/start'} className="rounded-full px-8 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white shadow-lg shadow-purple-500/25 border-0 text-base font-medium transition-transform hover:scale-105">
+            <Button size="lg" onClick={() => window.location.href='/dashboard/start'} className="rounded-full px-8 text-base font-medium">
               Launch AI
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 bg-white/80 backdrop-blur-md border-gray-200 text-gray-700 hover:bg-gray-50 text-base font-medium">
+            <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium">
               Edit Business
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full px-8 bg-white/80 backdrop-blur-md border-gray-200 text-gray-700 hover:bg-gray-50 text-base font-medium">
+            <Button size="lg" variant="outline" className="rounded-full px-8 text-base font-medium">
               Generate Report
             </Button>
           </motion.div>
         </div>
-      </section>
+      </GlassCard>
 
       {/* Quick Actions */}
       <section>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Quick Actions</h2>
+        <div className="flex items-center justify-between mb-6 px-2">
+          <h2 className="text-2xl font-bold text-[#0A121A]">Quick Actions</h2>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {quickActions.map((action, idx) => {
             const Icon = action.icon;
             return (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 * (idx % 4) }}
-                key={idx}
+              <GlassCard 
+                key={idx} 
+                glow={action.glow as any} 
+                hover="lift" 
+                animate={true} 
+                delay={0.1 * (idx % 4)}
+                className="p-5 group cursor-pointer"
+                onClick={() => {}}
               >
-                <Link href="#" className="block p-5 rounded-2xl bg-white border border-gray-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_30px_rgba(0,0,0,0.06)] hover:border-purple-100 hover:-translate-y-1 transition-all group">
-                  <div className="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center mb-4 group-hover:bg-purple-100 transition-colors">
-                    <Icon className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <h3 className="font-semibold text-gray-900 mb-1 group-hover:text-purple-700 transition-colors">{action.title}</h3>
-                  <p className="text-sm text-gray-500">{action.desc}</p>
-                </Link>
-              </motion.div>
+                <div className="w-10 h-10 rounded-xl bg-white/50 border border-white/60 shadow-inner flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <Icon className="w-5 h-5 text-[#4F7CFF]" />
+                </div>
+                <h3 className="font-semibold text-[#0A121A] mb-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4F7CFF] group-hover:to-[#7B5CFF] transition-all duration-300">{action.title}</h3>
+                <p className="text-sm text-[#0A121A]/60">{action.desc}</p>
+              </GlassCard>
             );
           })}
         </div>

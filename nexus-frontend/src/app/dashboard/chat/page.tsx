@@ -27,29 +27,29 @@ export default function ChatPage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-6rem)] max-w-4xl mx-auto bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden relative">
-      <div className="absolute inset-0 mesh-bg opacity-20 pointer-events-none" />
+    <div className="flex flex-col h-[calc(100vh-6rem)] max-w-4xl mx-auto bg-white/40 backdrop-blur-3xl rounded-[32px] shadow-[0_20px_60px_rgba(79,124,255,0.08)] border border-white/60 overflow-hidden relative">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#4F7CFF]/5 via-transparent to-[#7B5CFF]/5 pointer-events-none" />
       
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-100 bg-white/80 backdrop-blur-md z-10">
-        <div className="flex items-center gap-3">
-           <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center border border-purple-200">
-             <Bot className="w-5 h-5 text-purple-600" />
+      <div className="flex items-center justify-between p-5 border-b border-white/60 bg-white/40 backdrop-blur-md z-10">
+        <div className="flex items-center gap-4">
+           <div className="w-12 h-12 rounded-[16px] bg-[#4F7CFF]/10 flex items-center justify-center border border-[#4F7CFF]/20 shadow-sm">
+             <Bot className="w-6 h-6 text-[#4F7CFF]" />
            </div>
            <div>
-             <h2 className="font-semibold text-gray-900">Planner Agent</h2>
-             <p className="text-xs text-green-600 flex items-center gap-1">
-               <span className="w-2 h-2 rounded-full bg-green-500 inline-block" /> Online
+             <h2 className="font-bold text-[#0A121A] text-lg">Planner Agent</h2>
+             <p className="text-xs font-bold text-[#42D392] flex items-center gap-1.5 mt-0.5">
+               <span className="w-2 h-2 rounded-full bg-[#42D392] shadow-[0_0_8px_rgba(66,211,146,0.6)] inline-block" /> Online
              </p>
            </div>
         </div>
-        <button className="text-gray-400 hover:text-gray-600 p-2">
-          <MoreHorizontal className="w-5 h-5" />
+        <button className="text-[#0A121A]/40 hover:text-[#4F7CFF] p-2 hover:bg-[#4F7CFF]/10 rounded-xl transition-all">
+          <MoreHorizontal className="w-6 h-6" />
         </button>
       </div>
 
       {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6 z-10">
+      <div className="flex-1 overflow-y-auto p-8 space-y-8 z-10 custom-scrollbar">
         {messages.map((msg, idx) => (
           <motion.div 
             key={idx}
@@ -57,20 +57,20 @@ export default function ChatPage() {
             animate={{ opacity: 1, y: 0 }}
             className={`flex gap-4 ${msg.role === 'user' ? 'flex-row-reverse' : ''}`}
           >
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1 ${msg.role === 'user' ? 'bg-gray-100' : 'bg-purple-100 border border-purple-200'}`}>
-              {msg.role === 'user' ? <User className="w-4 h-4 text-gray-600" /> : <AuraLogo size="sm" />}
+            <div className={`w-10 h-10 rounded-[14px] flex items-center justify-center shrink-0 mt-1 shadow-sm border ${msg.role === 'user' ? 'bg-[#0A121A]/5 border-white/60 backdrop-blur-sm' : 'bg-white/80 border-[#4F7CFF]/20 backdrop-blur-md'}`}>
+              {msg.role === 'user' ? <User className="w-5 h-5 text-[#0A121A]/60" /> : <AuraLogo size="sm" />}
             </div>
-            <div className={`group relative max-w-[80%] p-4 rounded-2xl ${msg.role === 'user' ? 'bg-gray-100 text-gray-900 rounded-tr-sm' : 'glass-card border-gray-100 text-gray-800 rounded-tl-sm'}`}>
-              <div className="prose prose-sm prose-p:leading-relaxed prose-headings:font-bold prose-headings:text-gray-900 max-w-none">
+            <div className={`group relative max-w-[80%] p-5 rounded-[24px] ${msg.role === 'user' ? 'bg-[#0A121A]/5 text-[#0A121A] rounded-tr-sm border border-white/40 backdrop-blur-sm' : 'bg-white/60 border border-white/60 text-[#0A121A] rounded-tl-sm backdrop-blur-md shadow-sm'}`}>
+              <div className="prose prose-sm prose-p:leading-relaxed prose-headings:font-bold prose-headings:text-[#0A121A] prose-li:text-[#0A121A]/80 prose-p:text-[#0A121A]/80 max-w-none">
                 {msg.content.split('\n').map((line, i) => {
-                  if (line.startsWith('###')) return <h3 key={i} className="mt-4 mb-2 text-lg">{line.replace('###', '')}</h3>;
+                  if (line.startsWith('###')) return <h3 key={i} className="mt-4 mb-2 text-lg text-[#0A121A]">{line.replace('###', '')}</h3>;
                   if (line.startsWith('-')) return <li key={i} className="ml-4">{line.replace('-', '')}</li>;
-                  return <p key={i} className="mb-2 last:mb-0">{line}</p>;
+                  return <p key={i} className="mb-2 last:mb-0 font-medium">{line}</p>;
                 })}
               </div>
               
               {msg.role === 'assistant' && (
-                <button className="absolute -bottom-3 -right-3 opacity-0 group-hover:opacity-100 p-2 bg-white rounded-full shadow-md border border-gray-100 text-gray-400 hover:text-purple-600 transition-all">
+                <button className="absolute -bottom-4 -right-4 opacity-0 group-hover:opacity-100 p-2.5 bg-white rounded-full shadow-[0_8px_20px_rgba(79,124,255,0.15)] border border-white/60 text-[#0A121A]/40 hover:text-[#4F7CFF] transition-all transform hover:scale-110">
                   <Copy className="w-4 h-4" />
                 </button>
               )}
@@ -80,10 +80,10 @@ export default function ChatPage() {
       </div>
 
       {/* Input Area */}
-      <div className="p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 z-10">
-        <div className="relative max-w-3xl mx-auto flex items-center bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-purple-300 focus-within:ring-2 focus-within:ring-purple-100 transition-all p-2">
-          <button className="p-3 text-gray-400 hover:text-purple-600 transition-colors">
-            <Mic className="w-5 h-5" />
+      <div className="p-5 bg-white/40 backdrop-blur-xl border-t border-white/60 z-10">
+        <div className="relative max-w-4xl mx-auto flex items-center bg-white/60 backdrop-blur-md rounded-[20px] border border-white/60 focus-within:border-[#4F7CFF] focus-within:ring-4 focus-within:ring-[#4F7CFF]/10 transition-all p-2 shadow-sm">
+          <button className="p-3 text-[#0A121A]/40 hover:text-[#7B5CFF] transition-colors rounded-xl hover:bg-white">
+            <Mic className="w-6 h-6" />
           </button>
           <input 
             type="text"
@@ -91,17 +91,17 @@ export default function ChatPage() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             placeholder="Message Planner Agent..."
-            className="flex-1 bg-transparent border-none outline-none px-2 text-gray-800 placeholder:text-gray-400"
+            className="flex-1 bg-transparent border-none outline-none px-3 font-medium text-[#0A121A] placeholder:text-[#0A121A]/40 text-base"
           />
           <button 
             onClick={handleSend}
             disabled={!input.trim()}
-            className="p-3 bg-purple-600 hover:bg-purple-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-xl transition-colors ml-2"
+            className="p-3.5 bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF] hover:opacity-90 disabled:from-gray-300 disabled:to-gray-300 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-[16px] transition-all ml-2 shadow-[0_8px_20px_rgba(79,124,255,0.3)] disabled:shadow-none transform hover:-translate-y-0.5 disabled:transform-none"
           >
             <Send className="w-5 h-5" />
           </button>
         </div>
-        <p className="text-center text-xs text-gray-400 mt-3">Aura AI can make mistakes. Consider verifying important information.</p>
+        <p className="text-center text-xs font-bold text-[#0A121A]/40 mt-4 tracking-wide">Aura AI can make mistakes. Consider verifying important information.</p>
       </div>
     </div>
   );

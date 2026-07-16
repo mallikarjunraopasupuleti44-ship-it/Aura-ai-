@@ -17,9 +17,9 @@ function Toggle({ enabled, onToggle }: ToggleProps) {
   return (
     <button onClick={onToggle} className="relative">
       {enabled ? (
-        <ToggleRight className="w-10 h-10 text-purple-600 cursor-pointer" />
+        <ToggleRight className="w-10 h-10 text-[#4F7CFF] cursor-pointer drop-shadow-sm transition-colors" />
       ) : (
-        <ToggleLeft className="w-10 h-10 text-gray-300 cursor-pointer" />
+        <ToggleLeft className="w-10 h-10 text-[#0A121A]/20 cursor-pointer transition-colors hover:text-[#0A121A]/30" />
       )}
     </button>
   );
@@ -34,14 +34,14 @@ interface SettingRowProps {
 
 function SettingRow({ icon, title, description, children }: SettingRowProps) {
   return (
-    <div className="flex items-center justify-between py-5 border-b border-gray-100 last:border-0">
+    <div className="flex items-center justify-between py-6 border-b border-[#0A121A]/5 last:border-0 group">
       <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center shrink-0">
+        <div className="w-12 h-12 rounded-[16px] bg-white/60 border border-white/60 flex items-center justify-center shrink-0 shadow-sm group-hover:bg-white group-hover:border-[#4F7CFF]/20 group-hover:shadow-[0_4px_12px_rgba(79,124,255,0.1)] transition-all">
           {icon}
         </div>
         <div>
-          <h4 className="font-semibold text-gray-900 text-sm">{title}</h4>
-          <p className="text-xs text-gray-500 mt-0.5">{description}</p>
+          <h4 className="font-bold text-[#0A121A] text-sm group-hover:text-[#4F7CFF] transition-colors">{title}</h4>
+          <p className="text-sm text-[#0A121A]/50 mt-1 font-medium">{description}</p>
         </div>
       </div>
       <div className="ml-4 shrink-0">
@@ -93,8 +93,8 @@ export default function SettingsPage() {
     <div className="max-w-3xl mx-auto py-8 px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Header */}
       <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-3xl font-bold text-gray-900 mb-1">Settings</h1>
-        <p className="text-gray-500">Customize your Aura AI experience.</p>
+        <h1 className="text-3xl font-bold text-[#0A121A] mb-1 tracking-tight">Settings</h1>
+        <p className="text-[#0A121A]/60 font-medium">Customize your Aura AI experience.</p>
       </motion.div>
 
       {/* Notifications */}
@@ -102,16 +102,16 @@ export default function SettingsPage() {
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="glass-card rounded-2xl border border-white/60 p-6"
+        className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-8 shadow-[0_20px_40px_rgba(79,124,255,0.05)]"
       >
-        <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <Bell className="w-5 h-5 text-purple-600" />
+        <h3 className="text-xl font-bold text-[#0A121A] mb-2 flex items-center gap-3">
+          <Bell className="w-6 h-6 text-[#4F7CFF]" />
           Notifications
         </h3>
-        <p className="text-sm text-gray-500 mb-4">Choose how you want to be notified.</p>
+        <p className="text-sm font-medium text-[#0A121A]/50 mb-6">Choose how you want to be notified.</p>
 
         <SettingRow 
-          icon={<Bell className="w-5 h-5 text-blue-600" />}
+          icon={<Bell className="w-5 h-5 text-[#4F7CFF]" />}
           title="Email Notifications"
           description="Receive updates about your AI agents via email"
         >
@@ -119,7 +119,7 @@ export default function SettingsPage() {
         </SettingRow>
 
         <SettingRow 
-          icon={<Volume2 className="w-5 h-5 text-orange-600" />}
+          icon={<Volume2 className="w-5 h-5 text-[#7B5CFF]" />}
           title="Sound Effects"
           description="Play sounds when agents complete tasks"
         >
@@ -132,16 +132,16 @@ export default function SettingsPage() {
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="glass-card rounded-2xl border border-white/60 p-6"
+        className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-8 shadow-[0_20px_40px_rgba(79,124,255,0.05)]"
       >
-        <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <Palette className="w-5 h-5 text-pink-600" />
+        <h3 className="text-xl font-bold text-[#0A121A] mb-2 flex items-center gap-3">
+          <Palette className="w-6 h-6 text-[#7B5CFF]" />
           Appearance
         </h3>
-        <p className="text-sm text-gray-500 mb-4">Control the look and feel of your workspace.</p>
+        <p className="text-sm font-medium text-[#0A121A]/50 mb-6">Control the look and feel of your workspace.</p>
 
         <SettingRow 
-          icon={<Moon className="w-5 h-5 text-indigo-600" />}
+          icon={<Moon className="w-5 h-5 text-[#4F7CFF]" />}
           title="Dark Mode"
           description="Switch to a dark theme for comfortable nighttime use"
         >
@@ -149,14 +149,14 @@ export default function SettingsPage() {
         </SettingRow>
 
         <SettingRow 
-          icon={<Globe className="w-5 h-5 text-green-600" />}
+          icon={<Globe className="w-5 h-5 text-[#2FD9FF]" />}
           title="Language"
           description="Choose your preferred display language"
         >
           <select 
             value={settings.language}
             onChange={(e) => setSettings(prev => ({ ...prev, language: e.target.value }))}
-            className="text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-700 outline-none focus:border-purple-400 cursor-pointer"
+            className="text-sm bg-white/60 border border-white/60 rounded-xl px-4 py-2 font-bold text-[#0A121A] outline-none focus:border-[#4F7CFF] focus:ring-4 focus:ring-[#4F7CFF]/10 cursor-pointer shadow-sm"
           >
             <option>English</option>
             <option>Hindi</option>
@@ -171,16 +171,16 @@ export default function SettingsPage() {
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="glass-card rounded-2xl border border-white/60 p-6"
+        className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-8 shadow-[0_20px_40px_rgba(79,124,255,0.05)]"
       >
-        <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <Monitor className="w-5 h-5 text-cyan-600" />
+        <h3 className="text-xl font-bold text-[#0A121A] mb-2 flex items-center gap-3">
+          <Monitor className="w-6 h-6 text-[#2FD9FF]" />
           AI Preferences
         </h3>
-        <p className="text-sm text-gray-500 mb-4">Configure how AI agents behave.</p>
+        <p className="text-sm font-medium text-[#0A121A]/50 mb-6">Configure how AI agents behave.</p>
 
         <SettingRow 
-          icon={<Eye className="w-5 h-5 text-purple-600" />}
+          icon={<Eye className="w-5 h-5 text-[#4F7CFF]" />}
           title="Auto-Save Deliverables"
           description="Automatically save agent outputs to your workspace"
         >
@@ -188,14 +188,14 @@ export default function SettingsPage() {
         </SettingRow>
 
         <SettingRow 
-          icon={<Monitor className="w-5 h-5 text-cyan-600" />}
+          icon={<Monitor className="w-5 h-5 text-[#2FD9FF]" />}
           title="AI Response Speed"
           description="Choose between faster or more detailed responses"
         >
           <select 
             value={settings.aiModel}
             onChange={(e) => setSettings(prev => ({ ...prev, aiModel: e.target.value }))}
-            className="text-sm bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-700 outline-none focus:border-purple-400 cursor-pointer"
+            className="text-sm bg-white/60 border border-white/60 rounded-xl px-4 py-2 font-bold text-[#0A121A] outline-none focus:border-[#4F7CFF] focus:ring-4 focus:ring-[#4F7CFF]/10 cursor-pointer shadow-sm"
           >
             <option>Fast (Default)</option>
             <option>Balanced</option>
@@ -209,16 +209,16 @@ export default function SettingsPage() {
         initial={{ opacity: 0, y: 20 }} 
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25 }}
-        className="glass-card rounded-2xl border border-white/60 p-6"
+        className="bg-white/40 backdrop-blur-3xl rounded-[24px] border border-white/60 p-8 shadow-[0_20px_40px_rgba(79,124,255,0.05)]"
       >
-        <h3 className="text-lg font-bold text-gray-900 mb-2 flex items-center gap-2">
-          <Shield className="w-5 h-5 text-emerald-600" />
+        <h3 className="text-xl font-bold text-[#0A121A] mb-2 flex items-center gap-3">
+          <Shield className="w-6 h-6 text-[#42D392]" />
           Security & Privacy
         </h3>
-        <p className="text-sm text-gray-500 mb-4">Protect your account and data.</p>
+        <p className="text-sm font-medium text-[#0A121A]/50 mb-6">Protect your account and data.</p>
 
         <SettingRow 
-          icon={<Lock className="w-5 h-5 text-red-600" />}
+          icon={<Lock className="w-5 h-5 text-[#FF6B81]" />}
           title="Two-Factor Authentication"
           description="Add an extra layer of security to your account"
         >
@@ -226,7 +226,7 @@ export default function SettingsPage() {
         </SettingRow>
 
         <SettingRow 
-          icon={<Eye className="w-5 h-5 text-gray-600" />}
+          icon={<Eye className="w-5 h-5 text-[#7B5CFF]" />}
           title="Public Profile"
           description="Allow others to see your profile and business"
         >
@@ -243,7 +243,7 @@ export default function SettingsPage() {
       >
         <Button 
           onClick={handleSave}
-          className="rounded-xl px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-medium shadow-lg shadow-purple-500/20"
+          className="rounded-xl h-14 px-10 bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF] hover:opacity-90 text-white font-bold text-lg shadow-[0_10px_30px_rgba(79,124,255,0.3)] transition-all transform hover:-translate-y-0.5 border-0"
         >
           {saved ? "✓ Saved!" : "Save Settings"}
         </Button>

@@ -4,10 +4,13 @@ import { AIEmployees } from "@/components/home/ai-employees";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col w-full">
-      <Navbar />
-      <Hero />
-      <AIEmployees />
+    <main className="flex min-h-screen flex-col w-full bg-[#FCFDFF] relative overflow-hidden">
+      <div className="absolute inset-0 aurora-bg opacity-30 mix-blend-multiply pointer-events-none" />
+      <div className="relative z-10 flex flex-col w-full">
+        <Navbar />
+        <Hero />
+        <AIEmployees />
+      </div>
     </main>
   );
 }

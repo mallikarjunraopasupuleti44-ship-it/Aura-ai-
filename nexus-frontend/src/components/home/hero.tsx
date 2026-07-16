@@ -38,12 +38,7 @@ export function Hero() {
   };
 
   return (
-    <section className="relative min-h-screen pt-32 pb-20 overflow-hidden flex flex-col items-center">
-      {/* Background Effects */}
-      <div className="absolute inset-0 -z-10 mesh-bg opacity-70" />
-      <div className="absolute top-[10%] left-[20%] w-[40rem] h-[40rem] bg-indigo-500/10 rounded-full blur-[120px] -z-10 animate-blob" />
-      <div className="absolute bottom-[20%] right-[20%] w-[45rem] h-[45rem] bg-cyan-400/10 rounded-full blur-[140px] -z-10 animate-blob animation-delay-2000" />
-      
+    <section className="relative min-h-screen pt-32 pb-20 flex flex-col items-center justify-center">
       <div className="container px-6 flex flex-col items-center text-center max-w-5xl mx-auto z-10">
         
         {/* Animated Centered Logo */}
@@ -53,9 +48,8 @@ export function Hero() {
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="mb-10 relative flex justify-center items-center"
         >
-          {/* Subtle orbit rings behind the logo for extra pop */}
           <motion.div 
-            className="absolute inset-[-40%] rounded-full border border-blue-500/10 border-dashed"
+            className="absolute inset-[-40%] rounded-full border border-[#4F7CFF]/20 border-dashed"
             animate={{ rotate: 360 }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
           />
@@ -67,10 +61,10 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/60 text-sm font-medium text-gray-800 mb-8 shadow-sm"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/40 backdrop-blur-md border border-white/60 text-sm font-bold text-[#0A121A] mb-8 shadow-[0_4px_20px_rgba(79,124,255,0.1)]"
         >
           <span>✨</span>
-          <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-700 to-indigo-700">
+          <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#4F7CFF] to-[#7B5CFF]">
             AI Business Operating System
           </span>
         </motion.div>
@@ -80,7 +74,7 @@ export function Hero() {
           variants={container}
           initial="hidden"
           animate="visible"
-          className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 mb-6 flex flex-wrap justify-center gap-x-3 gap-y-2"
+          className="text-5xl md:text-7xl font-bold tracking-tight text-[#0A121A] mb-6 flex flex-wrap justify-center gap-x-3 gap-y-2"
         >
           {words1.map((word, index) => (
             <motion.span variants={child} key={index}>
@@ -89,7 +83,7 @@ export function Hero() {
           ))}
           <br className="hidden md:block w-full" />
           {words2.map((word, index) => (
-            <motion.span variants={child} key={`g-${index}`} className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600">
+            <motion.span variants={child} key={`g-${index}`} className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF] pb-2">
               {word}
             </motion.span>
           ))}
@@ -100,9 +94,9 @@ export function Hero() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.8 }}
-          className="text-lg md:text-xl text-gray-600 mb-10 max-w-3xl leading-relaxed font-light mx-auto"
+          className="text-lg md:text-xl text-[#0A121A]/60 mb-10 max-w-3xl leading-relaxed font-medium mx-auto"
         >
-          Upload your business once. <span className="font-medium text-gray-800">Aura AI learns your company</span> and deploys an AI workforce that plans, markets, automates, creates documents, manages customers, and helps grow your business.
+          Upload your business once. <span className="font-bold text-[#0A121A]">Aura AI learns your company</span> and deploys an AI workforce that plans, markets, automates, creates documents, manages customers, and helps grow your business.
         </motion.p>
 
         {/* CTAs */}
@@ -112,14 +106,14 @@ export function Hero() {
           transition={{ duration: 0.8, delay: 1 }}
           className="flex flex-col sm:flex-row gap-4 items-center justify-center mb-16"
         >
-          <Button size="lg" onClick={() => window.location.href='/signup'} magnetic={true} className="h-14 px-10 text-lg group relative overflow-hidden">
-            <span className="relative z-10 flex items-center">
+          <Button size="lg" onClick={() => window.location.href='/signup'} magnetic={true} className="h-14 px-10 text-lg group relative overflow-hidden bg-[#4F7CFF] hover:bg-[#7B5CFF] text-white shadow-[0_10px_30px_rgba(79,124,255,0.3)]">
+            <span className="relative z-10 flex items-center font-bold">
               Start Free <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </span>
             <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
           </Button>
-          <Button size="lg" variant="outline" magnetic={true} className="h-14 px-8 text-lg group bg-white/40 hover:bg-white/60">
-            <Play className="mr-2 w-5 h-5 text-blue-500 group-hover:scale-110 transition-transform" /> Watch Demo
+          <Button size="lg" variant="outline" magnetic={true} className="h-14 px-8 text-lg group bg-white/40 backdrop-blur-md border-white/60 hover:bg-white/60 text-[#0A121A] font-bold shadow-sm">
+            <Play className="mr-2 w-5 h-5 text-[#4F7CFF] group-hover:scale-110 transition-transform" /> Watch Demo
           </Button>
         </motion.div>
 
@@ -128,22 +122,22 @@ export function Hero() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 1, delay: 1.2 }}
-          className="flex flex-wrap justify-center gap-6 text-sm font-medium text-gray-600"
+          className="flex flex-wrap justify-center gap-6 text-sm font-bold text-[#0A121A]/60"
         >
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center"><ShieldCheck className="w-3 h-3 text-green-700" /></div>
+            <div className="w-6 h-6 rounded-full bg-[#42D392]/20 border border-[#42D392]/30 flex items-center justify-center"><ShieldCheck className="w-3.5 h-3.5 text-[#42D392]" /></div>
             Secure
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center"><Zap className="w-3 h-3 text-blue-700" /></div>
+            <div className="w-6 h-6 rounded-full bg-[#4F7CFF]/20 border border-[#4F7CFF]/30 flex items-center justify-center"><Zap className="w-3.5 h-3.5 text-[#4F7CFF]" /></div>
             AI Powered
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center"><Code2 className="w-3 h-3 text-purple-700" /></div>
+            <div className="w-6 h-6 rounded-full bg-[#7B5CFF]/20 border border-[#7B5CFF]/30 flex items-center justify-center"><Code2 className="w-3.5 h-3.5 text-[#7B5CFF]" /></div>
             No Coding
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center"><Building2 className="w-3 h-3 text-indigo-700" /></div>
+            <div className="w-6 h-6 rounded-full bg-[#2FD9FF]/20 border border-[#2FD9FF]/30 flex items-center justify-center"><Building2 className="w-3.5 h-3.5 text-[#2FD9FF]" /></div>
             Enterprise Ready
           </div>
         </motion.div>

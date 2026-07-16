@@ -8,20 +8,20 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button relative inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 overflow-hidden",
+  "group/button relative inline-flex shrink-0 items-center justify-center rounded-xl border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all duration-300 outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 overflow-hidden",
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg shadow-blue-500/25 hover:shadow-purple-500/40 hover:scale-[1.02] active:scale-[0.98] border border-white/10 before:absolute before:inset-0 before:bg-gradient-to-r before:from-purple-600 before:to-blue-600 before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500",
+        default: "bg-[#4F7CFF] text-white shadow-[0_0_20px_rgba(79,124,255,0.4)] hover:shadow-[0_0_40px_rgba(79,124,255,0.6)] hover:bg-[#7B5CFF] border border-white/20 hover:scale-[1.02]",
         outline:
-          "glass border border-white/40 text-gray-800 hover:bg-white/60 hover:shadow-[0_8px_30px_rgba(79,70,229,0.12)] hover:scale-[1.02] active:scale-[0.98]",
+          "bg-white/10 backdrop-blur-md border border-white/40 text-[#0A121A] hover:bg-white/30 hover:border-[#2FD9FF]/50 hover:shadow-[0_0_30px_rgba(47,217,255,0.2)] hover:scale-[1.02]",
         secondary:
-          "bg-indigo-50 text-indigo-900 hover:bg-indigo-100 border border-indigo-200/50 hover:scale-[1.02] active:scale-[0.98]",
+          "bg-[#7B5CFF]/10 text-[#7B5CFF] hover:bg-[#7B5CFF]/20 border border-[#7B5CFF]/20 hover:scale-[1.02]",
         ghost:
-          "hover:bg-black/5 hover:text-black/90 active:scale-[0.98]",
+          "hover:bg-[#4F7CFF]/10 hover:text-[#4F7CFF]",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-[#FF6B81]/10 text-[#FF6B81] hover:bg-[#FF6B81]/20",
+        link: "text-[#4F7CFF] underline-offset-4 hover:underline",
       },
       size: {
         default: "h-11 px-6 py-2",
@@ -91,7 +91,13 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       </ButtonPrimitive>
     );
 
-    if (!magnetic) return content;
+    if (!magnetic) {
+      return (
+        <motion.div whileTap={{ scale: 0.98 }} className="inline-block w-fit">
+          {content}
+        </motion.div>
+      );
+    }
 
     return (
       <motion.div
@@ -99,6 +105,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ x: mouseXSpring, y: mouseYSpring }}
+        whileTap={{ scale: 0.96 }}
         className="inline-block"
       >
         {content}

@@ -35,7 +35,6 @@ export default function SignupPage() {
         throw new Error(data.error || "Signup failed");
       }
 
-      // Store token and user info
       localStorage.setItem("aura_token", data.token);
       if (data.user?.name) localStorage.setItem("aura_user_name", data.user.name);
       if (data.user?.email) localStorage.setItem("aura_user_email", data.user.email);
@@ -48,20 +47,21 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen flex w-full bg-white">
+    <div className="min-h-screen flex w-full relative overflow-hidden bg-[#FCFDFF]">
+      <div className="absolute inset-0 aurora-bg opacity-40 mix-blend-multiply pointer-events-none" />
+
       {/* Left Panel: Branding & Animation */}
-      <div className="hidden lg:flex w-1/2 relative overflow-hidden bg-gradient-to-br from-purple-50 to-pink-50 items-center justify-center">
-        <div className="absolute inset-0 mesh-bg opacity-60" />
+      <div className="hidden lg:flex w-1/2 relative flex-col items-center justify-center p-12">
         <div className="relative z-10 flex flex-col items-center">
           <AuraLogo size="xl" className="mb-12" />
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
             className="text-center"
           >
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Start Your Journey</h2>
-            <p className="text-gray-600 max-w-sm">
+            <h2 className="text-4xl font-bold text-[#0A121A] mb-4 tracking-tight">Start Your Journey</h2>
+            <p className="text-[#0A121A]/60 max-w-sm text-lg leading-relaxed">
               Create an account to deploy your own custom AI workforce and manage your business.
             </p>
           </motion.div>
@@ -69,8 +69,8 @@ export default function SignupPage() {
       </div>
 
       {/* Right Panel: Signup Form */}
-      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 xl:px-24 relative">
-        <Link href="/" className="absolute top-8 left-8 sm:left-16 xl:left-24 text-gray-500 hover:text-purple-600 transition-colors flex items-center gap-2">
+      <div className="w-full lg:w-1/2 flex flex-col justify-center px-8 sm:px-16 xl:px-24 relative z-10">
+        <Link href="/" className="absolute top-8 left-8 sm:left-16 xl:left-24 text-[#0A121A]/50 hover:text-[#4F7CFF] transition-colors flex items-center gap-2 font-medium">
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </Link>
 
@@ -84,10 +84,10 @@ export default function SignupPage() {
              <AuraLogo size="md" />
           </div>
 
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Create an account</h1>
-          <p className="text-gray-500 mb-8">Enter your details to get started.</p>
+          <h1 className="text-4xl font-bold text-[#0A121A] mb-2 tracking-tight">Create an account</h1>
+          <p className="text-[#0A121A]/60 mb-8 text-lg">Enter your details to get started.</p>
 
-          <Button variant="outline" className="w-full h-12 rounded-xl mb-4 font-medium text-gray-700 bg-white hover:bg-gray-50 border-gray-200">
+          <Button variant="outline" className="w-full h-14 rounded-xl mb-4 font-medium text-[#0A121A] bg-white/60 backdrop-blur-md hover:bg-white/80 border-white/60 shadow-sm transition-all text-base">
             <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -97,67 +97,67 @@ export default function SignupPage() {
             Sign up with Google
           </Button>
 
-          <div className="relative flex items-center py-4">
-            <div className="flex-grow border-t border-gray-200"></div>
-            <span className="flex-shrink-0 mx-4 text-gray-400 text-sm">Or sign up with email</span>
-            <div className="flex-grow border-t border-gray-200"></div>
+          <div className="relative flex items-center py-6">
+            <div className="flex-grow border-t border-[#0A121A]/10"></div>
+            <span className="flex-shrink-0 mx-4 text-[#0A121A]/40 text-sm font-medium">Or sign up with email</span>
+            <div className="flex-grow border-t border-[#0A121A]/10"></div>
           </div>
 
           <form className="space-y-5" onSubmit={handleSignup}>
             {error && (
-              <div className="p-3 rounded-lg bg-red-50 text-red-600 text-sm font-medium border border-red-100">
+              <div className="p-4 rounded-xl bg-[#FF6B81]/10 text-[#FF6B81] text-sm font-medium border border-[#FF6B81]/20">
                 {error}
               </div>
             )}
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Name</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-bold text-[#0A121A]">Name</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#0A121A]/40" />
                 <input 
                   type="text" 
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="John Doe" 
-                  className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                  className="w-full h-14 pl-12 pr-4 rounded-xl border border-white/60 bg-white/40 backdrop-blur-sm focus:bg-white focus:border-[#4F7CFF] focus:ring-4 focus:ring-[#4F7CFF]/10 outline-none transition-all placeholder:text-[#0A121A]/30 text-[#0A121A]"
                   required
                 />
               </div>
             </div>
 
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Email</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-bold text-[#0A121A]">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#0A121A]/40" />
                 <input 
                   type="email" 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@company.com" 
-                  className="w-full h-12 pl-10 pr-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                  className="w-full h-14 pl-12 pr-4 rounded-xl border border-white/60 bg-white/40 backdrop-blur-sm focus:bg-white focus:border-[#4F7CFF] focus:ring-4 focus:ring-[#4F7CFF]/10 outline-none transition-all placeholder:text-[#0A121A]/30 text-[#0A121A]"
                   required
                 />
               </div>
             </div>
             
-            <div className="space-y-1">
-              <label className="text-sm font-medium text-gray-700">Password</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-bold text-[#0A121A]">Password</label>
               <input 
                 type="password" 
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••" 
-                className="w-full h-12 px-4 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition-all"
+                className="w-full h-14 px-4 rounded-xl border border-white/60 bg-white/40 backdrop-blur-sm focus:bg-white focus:border-[#4F7CFF] focus:ring-4 focus:ring-[#4F7CFF]/10 outline-none transition-all placeholder:text-[#0A121A]/30 text-[#0A121A]"
                 required
               />
             </div>
 
-            <Button type="submit" disabled={isLoading} className="w-full h-12 rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 hover:from-purple-700 hover:to-pink-600 text-white font-medium shadow-lg shadow-purple-500/25 border-0">
+            <Button type="submit" disabled={isLoading} className="w-full h-14 mt-4 rounded-xl bg-gradient-to-r from-[#4F7CFF] to-[#2FD9FF] hover:opacity-90 text-white font-bold text-lg shadow-[0_10px_30px_rgba(79,124,255,0.3)] transition-all transform hover:-translate-y-0.5">
               {isLoading ? "Creating account..." : "Sign up"}
             </Button>
           </form>
 
-          <p className="mt-8 text-center text-gray-600 text-sm">
-            Already have an account? <Link href="/login" className="text-purple-600 font-medium hover:text-purple-700">Log in</Link>
+          <p className="mt-8 text-center text-[#0A121A]/60 text-base font-medium">
+            Already have an account? <Link href="/login" className="text-[#4F7CFF] font-bold hover:text-[#7B5CFF] transition-colors ml-1">Log in</Link>
           </p>
         </motion.div>
       </div>

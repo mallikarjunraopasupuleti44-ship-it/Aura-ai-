@@ -1,38 +1,42 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export function GlobalMouseGlow() {
-  const glowRef = useRef<HTMLDivElement>(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Spring physics for smooth following
+  const springX = useSpring(mouseX, { stiffness: 50, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
   useEffect(() => {
-    setIsMounted(true);
+    setMounted(true);
     
-    const updateMousePosition = (e: MouseEvent) => {
-      if (!glowRef.current) return;
-      
-      const x = e.clientX;
-      const y = e.clientY;
-      
-      // Update the background using inline styles for high performance without re-rendering React state
-      glowRef.current.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(236, 72, 153, 0.04), transparent 50%)`;
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseX.set(e.clientX);
+      mouseY.set(e.clientY);
     };
 
-    window.addEventListener("mousemove", updateMousePosition);
-    return () => window.removeEventListener("mousemove", updateMousePosition);
-  }, []);
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [mouseX, mouseY]);
 
-  if (!isMounted) return null;
+  if (!mounted) return null;
 
   return (
-    <div
-      ref={glowRef}
-      className="pointer-events-none fixed inset-0 z-50 transition-opacity duration-300"
-      style={{ 
-        opacity: 1,
-        // Start with a subtle static glow in the center until mouse moves
-        background: `radial-gradient(600px circle at 50% 50%, rgba(236, 72, 153, 0.02), transparent 50%)` 
+    <motion.div
+      className="pointer-events-none fixed top-0 left-0 z-50 rounded-full mix-blend-screen"
+      style={{
+        x: springX,
+        y: springY,
+        translateX: "-50%",
+        translateY: "-50%",
+        width: "600px",
+        height: "600px",
+        background: "radial-gradient(circle, rgba(79,124,255,0.08) 0%, rgba(123,92,255,0.04) 40%, transparent 70%)",
       }}
     />
   );

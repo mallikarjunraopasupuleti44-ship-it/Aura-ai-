@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
-const outfit = Outfit({
-  variable: "--font-outfit",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
@@ -22,9 +22,9 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${outfit.variable} h-full antialiased font-sans`}
+      className={`${inter.variable} h-full antialiased font-sans`}
     >
-      <body className="min-h-full flex flex-col selection:bg-purple-100 selection:text-purple-900">
+      <body className="min-h-full flex flex-col selection:bg-[#4F7CFF]/20 selection:text-[#4F7CFF]">
         <GlobalMouseGlow />
         {children}
       </body>
