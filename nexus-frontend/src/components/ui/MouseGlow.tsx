@@ -16,7 +16,7 @@ export function GlobalMouseGlow() {
       const y = e.clientY;
       
       // Update the background using inline styles for high performance without re-rendering React state
-      glowRef.current.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(236, 72, 153, 0.12), transparent 40%)`;
+      glowRef.current.style.background = `radial-gradient(600px circle at ${x}px ${y}px, rgba(236, 72, 153, 0.04), transparent 50%)`;
     };
 
     window.addEventListener("mousemove", updateMousePosition);
@@ -32,7 +32,7 @@ export function GlobalMouseGlow() {
       style={{ 
         opacity: 1,
         // Start with a subtle static glow in the center until mouse moves
-        background: `radial-gradient(600px circle at 50% 50%, rgba(236, 72, 153, 0.05), transparent 40%)` 
+        background: `radial-gradient(600px circle at 50% 50%, rgba(236, 72, 153, 0.02), transparent 50%)` 
       }}
     />
   );
