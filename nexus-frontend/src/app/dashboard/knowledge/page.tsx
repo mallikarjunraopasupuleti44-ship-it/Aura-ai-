@@ -49,6 +49,9 @@ export default function KnowledgePage() {
         setDocuments(prev => [newDoc, ...prev]);
         setIsUploading(false);
       }, 1500);
+
+      // Reset the input value so the same file can be uploaded multiple times
+      e.target.value = '';
     }
   };
 
