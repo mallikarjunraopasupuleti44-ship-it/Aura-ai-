@@ -44,27 +44,6 @@ const runAgents = async (projectId, ideaPrompt) => {
   try {
     const model = 'gemini-2.0-flash';
 
-    // Agent 1: Planner
-    const plannerPrompt = `You are a Business Strategist. The user wants to build: "${ideaPrompt}". Provide a concise business plan including concept, target market, and a quick roadmap.`;
-    const plannerResponse = await ai.models.generateContent({ model, contents: plannerPrompt });
-    await saveTask(projectId, 'Planner Agent', 'Business Strategist', 'Business Plan', plannerResponse.text);
-
-    // Agent 2: Marketing
-    const marketingPrompt = `You are a Growth Marketer. The user is building: "${ideaPrompt}". Create a short 3-day social media content schedule with captions.`;
-    const marketingResponse = await ai.models.generateContent({ model, contents: marketingPrompt });
-    await saveTask(projectId, 'Marketing Agent', 'Growth Marketer', 'Social Campaign', marketingResponse.text);
-
-    // Agent 3: Finance
-    const financePrompt = `You are a Financial Analyst. The user is building: "${ideaPrompt}". Provide a brief startup cost analysis and a break-even estimate.`;
-    const financeResponse = await ai.models.generateContent({ model, contents: financePrompt });
-    await saveTask(projectId, 'Finance Agent', 'Financial Analyst', 'Cost Analysis', financeResponse.text);
-
-    // Agent 4: Operations
-    const opsPrompt = `You are an Operations Manager. The user is building: "${ideaPrompt}". Provide a short weekly checklist for running this business.`;
-    const opsResponse = await ai.models.generateContent({ model, contents: opsPrompt });
-    await saveTask(projectId, 'Operations Agent', 'Operations Manager', 'Weekly Schedule', opsResponse.text);
-
-    // Agent 5: Website
     const agents = [
       { name: 'Planner Agent', role: 'Business Strategist', deliverable: 'Business Plan', prompt: `You are a Business Strategist. The user wants to build: "${ideaPrompt}". Provide a concise business plan including concept, target market, and a quick roadmap.` },
       { name: 'Marketing Agent', role: 'Growth Marketer', deliverable: 'Social Campaign', prompt: `You are a Growth Marketer. The user is building: "${ideaPrompt}". Create a short 3-day social media content schedule with captions.` },
