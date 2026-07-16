@@ -49,7 +49,7 @@ export function Hero() {
           transition={{ duration: 1.2, ease: "easeOut" }}
           className="mb-12 relative flex justify-center items-center w-32 h-32"
         >
-          <AuraLogo size="xl" />
+          <AuraLogo size="lg" />
         </motion.div>
 
         {/* Small Badge */}
