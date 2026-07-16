@@ -1,22 +1,25 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/GlassCard";
 import { 
   Rocket, BrainCircuit, LineChart, Users, Globe, CheckCircle2,
-  FileText, Activity, ChevronRight, Zap, X, Copy, Check, Eye, Loader2
+  FileText, Activity, ChevronRight, Zap, Check, Loader2, Play, Edit2, Info
 } from "lucide-react";
-import ReactMarkdown from 'react-markdown';
 
-// Simulated Agents Workflow Data
 const agents = [
-  { id: "planner", name: "Planner Agent", role: "Business Strategist", icon: BrainCircuit, bg: "bg-[#7B5CFF]/10", text: "text-[#7B5CFF]", glow: "violet", description: "Turns your idea into a complete business plan.", deliverable: "Business Plan" },
-  { id: "finance", name: "Finance Agent", role: "Financial Analyst", icon: LineChart, bg: "bg-[#4F7CFF]/10", text: "text-[#4F7CFF]", glow: "blue", description: "Builds startup cost analysis and projections.", deliverable: "Cost Analysis" },
-  { id: "marketing", name: "Marketing Agent", role: "Growth Marketer", icon: Users, bg: "bg-[#2FD9FF]/10", text: "text-[#2FD9FF]", glow: "cyan", description: "Creates ready-to-publish social content.", deliverable: "Social Campaign" },
-  { id: "operations", name: "Operations Agent", role: "Operations Manager", icon: CheckCircle2, bg: "bg-[#7B5CFF]/10", text: "text-[#7B5CFF]", glow: "violet", description: "Produces weekly schedules and SOPs.", deliverable: "Weekly Schedule" },
-  { id: "website", name: "Website Agent", role: "Web Developer", icon: Globe, bg: "bg-[#4F7CFF]/10", text: "text-[#4F7CFF]", glow: "blue", description: "Generates a live landing page for your business.", deliverable: "Landing Page" }
+  { id: "planner", name: "Planner Agent", role: "Business Strategist", icon: BrainCircuit, description: "Turns your idea into a complete business plan: concept, brand, market and roadmap.", deliverable: "Business Plan" },
+  { id: "marketing", name: "Marketing Agent", role: "Growth Marketer", icon: Users, description: "Creates ready-to-publish social content with captions, hashtags and a posting schedule.", deliverable: "Social Campaign" },
+  { id: "finance", name: "Finance Agent", role: "Financial Analyst", icon: LineChart, description: "Builds startup cost analysis, break-even point and 12-month projections with charts.", deliverable: "Cost Analysis" },
+  { id: "operations", name: "Operations Agent", role: "Operations Manager", icon: CheckCircle2, description: "Produces weekly schedules, supplier checklists and standard operating procedures.", deliverable: "Weekly Schedule" },
+  { id: "website", name: "Website Agent", role: "Web Developer", icon: Globe, description: "Generates a live landing page for your business using the brand identity.", deliverable: "Landing Page" }
+];
+
+const suggestions = [
+  "I want to start a bakery",
+  "Launch a home-cooked tiffin delivery service",
+  "Open a specialty coffee shop",
+  "Start an online handmade jewelry brand"
 ];
 
 export default function StartBusinessPage() {
@@ -24,10 +27,7 @@ export default function StartBusinessPage() {
   const [isDeploying, setIsDeploying] = useState(false);
   const [activeStepIndex, setActiveStepIndex] = useState(-1);
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  const [tasksData, setTasksData] = useState<any[]>([]);
-  const [selectedTask, setSelectedTask] = useState<any>(null);
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [activeTab, setActiveTab] = useState("Command Center");
 
   const handleDeploy = () => {
     if (!prompt.trim() || isDeploying) return;
@@ -35,257 +35,250 @@ export default function StartBusinessPage() {
     setIsDeploying(true);
     setActiveStepIndex(0);
     setCompletedSteps([]);
-    setTasksData([]);
     
-    // Simulate complex workflow cascading
     let currentStep = 0;
-    
     const runNextStep = () => {
       if (currentStep >= agents.length) {
         setIsDeploying(false);
         setActiveStepIndex(-1);
         return;
       }
-      
       setTimeout(() => {
         setCompletedSteps(prev => [...prev, currentStep]);
-        setTasksData(prev => [...prev, {
-          agentId: agents[currentStep].id,
-          deliverable: agents[currentStep].deliverable,
-          agentName: agents[currentStep].name,
-          agentRole: agents[currentStep].role,
-          content: `# ${agents[currentStep].deliverable}\n\nGenerated for: **${prompt}**\n\nThis is a highly detailed, AI-generated deliverable created by the ${agents[currentStep].name}. It includes specific actionable steps, strategic insights, and deep contextual memory from your business profile.\n\n### Key Highlights\n- Deep market analysis\n- Competitive intelligence\n- Operational workflows\n\n*All data is synced across your AI Operating System.*`
-        }]);
-        
         currentStep++;
         setActiveStepIndex(currentStep);
         runNextStep();
-      }, 2500); // 2.5s per agent simulation
+      }, 2500);
     };
-    
     runNextStep();
   };
 
-  const openPanel = (task: any) => { setSelectedTask(task); setIsPanelOpen(true); };
-  const closePanel = () => { setIsPanelOpen(false); setTimeout(() => setSelectedTask(null), 300); };
-  const copyContent = () => { if (selectedTask?.content) { navigator.clipboard.writeText(selectedTask.content); setCopied(true); setTimeout(() => setCopied(false), 2000); } };
-
   return (
-    <div className="max-w-[1400px] mx-auto pb-12 flex flex-col gap-8">
-      
-      {/* HEADER SECTION */}
-      <GlassCard className="p-8 md:p-12 border-white/60 relative overflow-hidden">
-        {/* Animated background glow */}
-        <div className="absolute top-[-50%] right-[-10%] w-[60%] h-[150%] bg-[#4F7CFF]/5 blur-[120px] rounded-full pointer-events-none" />
+    <div className="min-h-screen bg-[#060D14] -mt-8 -mx-8 p-8 font-sans text-white selection:bg-[#14b8a6]/30">
+      <div className="max-w-[1400px] mx-auto flex flex-col gap-8 pb-12">
         
-        <div className="relative z-10">
-          <div className="flex items-center gap-2 text-sm font-medium text-[#0A121A]/50 mb-6">
-            <span>Home</span>
-            <ChevronRight className="w-4 h-4" />
-            <span className="text-[#4F7CFF] bg-[#4F7CFF]/10 px-3 py-1 rounded-full flex items-center gap-1.5 border border-[#4F7CFF]/20 shadow-sm">
-              <Rocket className="w-3.5 h-3.5" /> Aura AI
-              <span className="text-[10px] tracking-widest uppercase ml-1">MISSION CONTROL</span>
-            </span>
-          </div>
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 text-sm font-medium text-slate-400 mb-2">
+          <span className="hover:text-white cursor-pointer transition-colors">&larr; Home</span>
+          <ChevronRight className="w-4 h-4 mx-2 opacity-50" />
+          <span className="text-[#14b8a6] bg-[#14b8a6]/10 px-3 py-1 rounded-full flex items-center gap-2 border border-[#14b8a6]/20">
+            <Rocket className="w-3.5 h-3.5" /> CofounderAI
+            <span className="text-[10px] tracking-widest uppercase ml-1 opacity-80">MISSION CONTROL</span>
+          </span>
+        </div>
 
-          <h1 className="text-4xl md:text-5xl font-bold text-[#0A121A] mb-4 tracking-tight">Deploy AI Workforce</h1>
-          <p className="text-[#0A121A]/60 mb-8 max-w-2xl text-base md:text-lg leading-relaxed font-medium">
-            Describe your business goal. Your AI team will collaborate to generate a complete business plan, financial model, marketing strategy, and operations schedule.
-          </p>
-
-          <div className="flex flex-col md:flex-row gap-4 items-center">
-            <div className="relative flex-1 w-full bg-white/40 backdrop-blur-xl rounded-2xl shadow-sm border border-white/60 overflow-hidden focus-within:border-[#4F7CFF]/50 focus-within:shadow-[0_0_30px_rgba(79,124,255,0.15)] transition-all">
-              <input
-                type="text"
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder='e.g. "I want to build an AI SaaS for architects"'
-                className="w-full bg-transparent outline-none px-6 py-5 text-[#0A121A] placeholder:text-[#0A121A]/40 text-lg font-medium"
-                onKeyDown={(e) => e.key === 'Enter' && handleDeploy()}
-                disabled={isDeploying}
-              />
+        {/* Hero Section */}
+        <div className="bg-[#0A131C] border border-[#1E293B] rounded-[24px] p-8 md:p-10 shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#14b8a6]/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/3" />
+          
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 text-[#14b8a6] mb-4 text-xs tracking-widest uppercase font-bold">
+              <Zap className="w-4 h-4" /> Mission Control
             </div>
-            <Button 
-              onClick={handleDeploy} 
-              disabled={isDeploying || !prompt.trim()}
-              className="w-full md:w-auto h-full min-h-[68px] rounded-2xl px-10 text-lg shadow-[0_15px_40px_rgba(79,124,255,0.3)]"
-            >
-              {isDeploying ? (
-                <>
-                  <Zap className="w-6 h-6 mr-3 animate-pulse text-white" />
-                  Agents Working...
-                </>
-              ) : (
-                <>
-                  <Rocket className="w-6 h-6 mr-3 text-white" />
-                  Deploy Agents
-                </>
-              )}
-            </Button>
+            
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 tracking-tight">What business do you want to build?</h1>
+            <p className="text-slate-400 mb-8 max-w-3xl text-base leading-relaxed">
+              Type your idea and your AI team gets to work — business plan, social campaign, cost analysis, operations and a live landing page. You review and approve every deliverable.
+            </p>
+
+            <div className="flex flex-col md:flex-row gap-4 items-center mb-6">
+              <div className="flex-1 w-full flex items-center bg-[#060D14] rounded-full border border-[#1E293B] px-2 py-2 focus-within:border-[#14b8a6]/50 transition-colors">
+                <input
+                  type="text"
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  placeholder='e.g. "I want to start a bakery"'
+                  className="flex-1 bg-transparent outline-none px-6 text-white placeholder:text-slate-600 text-lg"
+                  onKeyDown={(e) => e.key === 'Enter' && handleDeploy()}
+                  disabled={isDeploying}
+                />
+                <button 
+                  onClick={handleDeploy} 
+                  disabled={isDeploying || !prompt.trim()}
+                  className="bg-[#14b8a6] hover:bg-[#0f9687] disabled:opacity-50 disabled:hover:bg-[#14b8a6] text-[#060D14] font-bold px-8 py-4 rounded-full flex items-center gap-2 transition-all h-full"
+                >
+                  {isDeploying ? <Loader2 className="w-5 h-5 animate-spin" /> : <Rocket className="w-5 h-5" />}
+                  Deploy AI Team
+                </button>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-slate-500 text-sm font-medium mr-2">Try:</span>
+              {suggestions.map((s, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => setPrompt(s)}
+                  className="text-xs text-slate-300 bg-[#0F1722] hover:bg-[#1E293B] border border-[#1E293B] px-4 py-2 rounded-full transition-colors"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </GlassCard>
 
-      {/* STATS ROW */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "TASKS COMPLETED", value: completedSteps.length, icon: CheckCircle2, color: "text-[#42D392]" },
-          { label: "WORDS PRODUCED", value: completedSteps.length * 1250, icon: FileText, color: "text-[#4F7CFF]" },
-          { label: "HOURS SAVED", value: completedSteps.length * 24, icon: Activity, color: "text-[#F7B955]", suffix: "h" },
-          { label: "AGENTS ACTIVE", value: isDeploying ? 1 : 0, icon: Zap, color: "text-[#7B5CFF]" },
-        ].map((stat, i) => (
-          <GlassCard key={i} className="p-6">
-            <div className="flex items-center gap-4">
-              <div className={`w-12 h-12 rounded-2xl bg-white/60 border border-white/80 shadow-sm flex items-center justify-center ${stat.color}`}>
-                <stat.icon className="w-6 h-6" />
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { label: "TASKS COMPLETED", value: completedSteps.length, icon: CheckCircle2, color: "text-[#14b8a6]" },
+            { label: "WORDS PRODUCED", value: completedSteps.length * 1250, icon: FileText, color: "text-[#14b8a6]" },
+            { label: "HOURS SAVED", value: completedSteps.length * 24, icon: Activity, color: "text-[#F59E0B]", suffix: "h" },
+            { label: "AGENTS ACTIVE", value: isDeploying ? 1 : 0, icon: Zap, color: "text-white" },
+          ].map((stat, i) => (
+            <div key={i} className="bg-[#0A131C] border border-[#1E293B] rounded-2xl p-6 flex items-center gap-5">
+              <div className="w-12 h-12 rounded-full bg-[#060D14] border border-[#1E293B] flex items-center justify-center">
+                <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
               <div>
-                <div className="text-3xl font-bold text-[#0A121A]">
+                <div className="text-2xl font-bold text-white mb-1">
                   {stat.value}{stat.suffix}
                 </div>
-                <div className="text-[10px] font-bold tracking-widest text-[#0A121A]/40 uppercase mt-1">{stat.label}</div>
+                <div className="text-[10px] font-bold tracking-widest text-slate-500 uppercase">{stat.label}</div>
               </div>
             </div>
-          </GlassCard>
-        ))}
-      </div>
-
-      {/* WORKFLOW VISUALIZER */}
-      <GlassCard className="p-10 border-white/60">
-        <div className="mb-10 text-center">
-          <h2 className="text-2xl font-bold text-[#0A121A] mb-2 tracking-tight">Agent Collaboration Stream</h2>
-          <p className="text-[#0A121A]/60 font-medium text-sm">Watch your AI team hand off context and build your business in real-time.</p>
+          ))}
         </div>
 
-        <div className="relative">
-          {/* Connecting Line Background */}
-          <div className="absolute top-1/2 left-0 right-0 h-1 bg-white/50 -translate-y-1/2 rounded-full hidden lg:block" />
+        {/* Tabs */}
+        <div className="flex items-center gap-2 bg-[#0A131C] border border-[#1E293B] rounded-full p-1.5 mt-4">
+          {["Command Center", "Team", "Automation"].map(tab => (
+            <button 
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 text-center py-3 rounded-full text-sm font-bold transition-colors ${
+                activeTab === tab 
+                  ? "bg-[#1E293B] text-white shadow-sm" 
+                  : "text-slate-400 hover:text-slate-200"
+              }`}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+
+        {/* Main Content Area: Team */}
+        <div className="mt-6 flex flex-col lg:flex-row gap-6">
           
-          {/* Animated Progress Line */}
-          <div className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-[#4F7CFF] via-[#7B5CFF] to-[#2FD9FF] -translate-y-1/2 rounded-full hidden lg:block transition-all duration-1000 ease-out shadow-[0_0_15px_rgba(79,124,255,0.5)]" 
-               style={{ width: `${Math.min(100, (completedSteps.length / (agents.length - 1)) * 100)}%` }} 
-          />
+          {/* Left: Agents Grid */}
+          <div className="flex-1">
+            <div className="flex justify-between items-end mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-2 tracking-tight">Your AI Workforce</h2>
+                <p className="text-slate-400 text-sm">Hire, edit, pause or remove employees. You are the CEO.</p>
+              </div>
+              <button className="bg-[#0F1722] hover:bg-[#1E293B] text-[#14b8a6] border border-[#14b8a6]/30 px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-colors">
+                <Users className="w-4 h-4" /> Hire Employee
+              </button>
+            </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 lg:gap-4 relative z-10">
-            {agents.map((agent, index) => {
-              const isCompleted = completedSteps.includes(index);
-              const isActive = activeStepIndex === index;
-              const isPending = !isCompleted && !isActive;
-              
-              const task = tasksData.find(t => t.agentId === agent.id);
-
-              return (
-                <motion.div 
-                  key={agent.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  className="flex flex-col items-center"
-                >
-                  {/* Agent Node */}
-                  <div className={`relative w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 mb-6 ${
-                    isActive 
-                      ? "bg-white border-2 border-[#4F7CFF] shadow-[0_0_40px_rgba(79,124,255,0.3)] scale-110" 
-                      : isCompleted 
-                        ? "bg-[#4F7CFF] border-2 border-[#4F7CFF] shadow-lg" 
-                        : "bg-white/40 border border-white/60 shadow-sm"
-                  }`}>
-                    <agent.icon className={`w-8 h-8 transition-colors duration-500 ${
-                      isActive ? "text-[#4F7CFF]" : isCompleted ? "text-white" : "text-[#0A121A]/30"
-                    }`} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {agents.map((agent, index) => {
+                const isActive = activeStepIndex === index;
+                const isDone = completedSteps.includes(index);
+                
+                return (
+                  <div key={agent.id} className={`bg-[#0A131C] border ${isActive ? 'border-[#14b8a6]' : 'border-[#1E293B]'} rounded-2xl p-6 flex flex-col justify-between transition-colors relative overflow-hidden group`}>
+                    {isActive && <div className="absolute top-0 left-0 w-full h-1 bg-[#14b8a6] animate-pulse" />}
                     
-                    {/* Active Ping */}
-                    {isActive && (
-                      <span className="absolute inset-0 rounded-3xl border-2 border-[#4F7CFF] animate-ping opacity-20" />
-                    )}
-                    
-                    {/* Completion Check */}
-                    {isCompleted && (
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-[#42D392] rounded-full border-2 border-white flex items-center justify-center shadow-sm">
-                        <Check className="w-3 h-3 text-white font-bold" />
+                    <div>
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex gap-4">
+                          <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${isActive ? 'bg-[#14b8a6]/10 border-[#14b8a6]/30' : 'bg-[#060D14] border-[#1E293B]'}`}>
+                            <agent.icon className={`w-6 h-6 ${isActive ? 'text-[#14b8a6]' : 'text-slate-400'}`} />
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-white text-base">{agent.name}</h3>
+                            <p className="text-slate-500 text-xs mt-1">{agent.role}</p>
+                          </div>
+                        </div>
+                        <span className={`text-[10px] uppercase tracking-widest font-bold px-3 py-1 rounded-full border ${
+                          isActive ? 'bg-[#14b8a6]/10 text-[#14b8a6] border-[#14b8a6]/20' : 
+                          isDone ? 'bg-slate-800 text-slate-300 border-slate-700' : 'bg-[#060D14] text-slate-500 border-[#1E293B]'
+                        }`}>
+                          {isActive ? 'Live' : isDone ? 'Done' : 'Idle'}
+                        </span>
                       </div>
-                    )}
-                  </div>
-
-                  {/* Text Details */}
-                  <div className="text-center">
-                    <h3 className={`font-bold text-base mb-1 transition-colors duration-500 ${isActive || isCompleted ? "text-[#0A121A]" : "text-[#0A121A]/40"}`}>
-                      {agent.name}
-                    </h3>
-                    <p className="text-[10px] font-bold tracking-widest uppercase text-[#0A121A]/40 mb-3">
-                      {agent.role}
-                    </p>
-                    
-                    {/* Deliverable Action Button */}
-                    <AnimatePresence>
-                      {isCompleted && task && (
-                        <motion.div
-                          initial={{ opacity: 0, scale: 0.8 }}
-                          animate={{ opacity: 1, scale: 1 }}
-                          transition={{ type: "spring", bounce: 0.5 }}
-                        >
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => openPanel(task)}
-                            className="h-8 rounded-full border-[#4F7CFF]/30 text-[#4F7CFF] hover:bg-[#4F7CFF]/10 text-xs font-bold w-full"
-                          >
-                            <Eye className="w-3 h-3 mr-1.5" />
-                            View {agent.deliverable}
-                          </Button>
-                        </motion.div>
-                      )}
                       
-                      {isActive && (
-                        <motion.div
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          className="flex items-center justify-center gap-1.5 text-[10px] font-bold tracking-widest text-[#4F7CFF] uppercase bg-[#4F7CFF]/10 py-1.5 px-3 rounded-full border border-[#4F7CFF]/20"
+                      <p className="text-slate-400 text-sm leading-relaxed mb-6">
+                        {agent.description}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button className="flex-1 bg-[#060D14] hover:bg-[#0F1722] border border-[#1E293B] text-slate-300 py-3 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors">
+                        <Play className="w-4 h-4" /> Assign task
+                      </button>
+                      <button className="w-12 h-12 flex items-center justify-center bg-[#060D14] hover:bg-[#0F1722] border border-[#1E293B] text-slate-400 rounded-xl transition-colors">
+                        <Edit2 className="w-4 h-4" />
+                      </button>
+                      <button className="w-12 h-12 flex items-center justify-center bg-[#060D14] hover:bg-[#0F1722] border border-[#1E293B] text-slate-400 rounded-xl transition-colors">
+                        <Info className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Right: Team Activity (Only show if active or done) */}
+          <div className="w-full lg:w-[350px] shrink-0">
+            <div className="bg-[#0A131C] border border-[#1E293B] rounded-2xl p-6 h-full min-h-[500px] flex flex-col">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-bold text-white tracking-tight">Team Activity</h3>
+                <span className="flex items-center gap-2 text-xs font-bold text-[#14b8a6] tracking-widest uppercase">
+                  <span className="w-2 h-2 rounded-full bg-[#14b8a6] animate-pulse" /> Live
+                </span>
+              </div>
+              
+              <div className="flex-1 flex flex-col justify-center items-center text-center px-4">
+                {completedSteps.length === 0 && !isDeploying ? (
+                  <p className="text-slate-500 text-sm">
+                    Your AI team's activity will appear here once you assign a goal.
+                  </p>
+                ) : (
+                  <div className="w-full h-full flex flex-col justify-start items-start gap-4">
+                    <AnimatePresence>
+                      {completedSteps.map((stepIndex) => (
+                        <motion.div 
+                          key={stepIndex}
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="flex items-start gap-3 text-left w-full border-b border-[#1E293B] pb-4"
                         >
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                          Processing...
+                          <div className="w-8 h-8 shrink-0 rounded-full bg-[#14b8a6]/10 flex items-center justify-center mt-1">
+                            <Check className="w-4 h-4 text-[#14b8a6]" />
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-bold">{agents[stepIndex].name}</p>
+                            <p className="text-slate-400 text-xs mt-1">Produced {agents[stepIndex].deliverable}</p>
+                          </div>
+                        </motion.div>
+                      ))}
+                      {activeStepIndex !== -1 && (
+                        <motion.div 
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          className="flex items-start gap-3 text-left w-full"
+                        >
+                          <div className="w-8 h-8 shrink-0 rounded-full border border-[#1E293B] flex items-center justify-center mt-1">
+                            <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-bold">{agents[activeStepIndex].name}</p>
+                            <p className="text-[#14b8a6] text-xs mt-1 animate-pulse">Working on {agents[activeStepIndex].deliverable}...</p>
+                          </div>
                         </motion.div>
                       )}
                     </AnimatePresence>
                   </div>
-                </motion.div>
-              );
-            })}
+                )}
+              </div>
+            </div>
           </div>
         </div>
-      </GlassCard>
-
-      {/* SLIDE-OUT PANEL FOR DELIVERABLE REVIEW */}
-      <AnimatePresence>
-        {isPanelOpen && selectedTask && (
-          <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }} className="fixed inset-y-0 right-0 left-[312px] z-40 bg-[#0A121A]/20 backdrop-blur-sm" onClick={closePanel} />
-            <motion.div initial={{ x: "100%", opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: "100%", opacity: 0 }} transition={{ type: 'spring', damping: 25, stiffness: 300 }} className="fixed inset-y-4 right-4 z-50 w-full max-w-2xl h-[calc(100vh-2rem)] bg-white/80 backdrop-blur-2xl rounded-[28px] shadow-[0_0_80px_rgba(79,124,255,0.15)] flex flex-col border border-white/80 overflow-hidden">
-              <div className="px-8 py-6 border-b border-white/40 flex justify-between items-center shrink-0 bg-white/40 backdrop-blur-xl">
-                <div>
-                  <h3 className="font-bold text-2xl text-[#0A121A] tracking-tight">{selectedTask.deliverable}</h3>
-                  <p className="text-sm font-medium text-[#0A121A]/50 mt-1">Produced by {selectedTask.agentName}</p>
-                </div>
-                <button onClick={closePanel} className="p-3 bg-white/50 hover:bg-white border border-white/60 rounded-full text-[#0A121A]/50 hover:text-[#0A121A] transition-all shadow-sm"><X className="w-5 h-5" /></button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
-                <div className="prose prose-sm md:prose-base max-w-none text-[#0A121A]/80 prose-headings:text-[#0A121A] prose-headings:font-bold prose-headings:tracking-tight prose-a:text-[#4F7CFF] prose-p:leading-relaxed prose-p:mb-5 prose-li:text-[#0A121A]/80 prose-li:marker:text-[#4F7CFF] prose-strong:text-[#0A121A] prose-strong:font-bold">
-                  <ReactMarkdown>{selectedTask.content}</ReactMarkdown>
-                </div>
-              </div>
-              <div className="px-8 py-6 border-t border-white/40 flex justify-between items-center shrink-0 bg-white/50 backdrop-blur-xl">
-                <button onClick={copyContent} className="flex items-center gap-2 text-sm text-[#0A121A]/60 hover:text-[#0A121A] transition-colors font-bold px-4 py-2.5 rounded-xl border border-white/60 bg-white/40 hover:bg-white shadow-sm">
-                  {copied ? <Check className="w-4 h-4 text-[#42D392]" /> : <Copy className="w-4 h-4" />}
-                  {copied ? "Copied!" : "Copy"}
-                </button>
-                <Button onClick={closePanel} className="rounded-xl px-8 shadow-sm">
-                  <CheckCircle2 className="w-4 h-4 mr-2" /> Mark Approved
-                </Button>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }
