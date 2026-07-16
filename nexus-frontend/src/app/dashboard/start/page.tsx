@@ -194,7 +194,7 @@ export default function StartBusinessPage() {
       
     } catch (err) {
       console.error(err);
-      setActivityLog(prev => [...prev, "Error deploying AI workforce. Are you logged in?"]);
+      setActivityLog(prev => [...prev, "Error deploying AI workforce. Make sure you are logged in.", "If using a free Render backend, it may take 1-2 minutes to wake up. Please try again in a moment."]);
       setIsDeploying(false);
     }
   };
