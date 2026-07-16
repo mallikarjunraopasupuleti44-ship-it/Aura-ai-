@@ -257,7 +257,7 @@ export default function StartBusinessPage() {
                         </div>
                       </motion.div>
                     ))}
-                    {activeStepIndex !== -1 && (
+                    {activeStepIndex !== -1 && activeStepIndex < agents.length && (
                       <motion.div 
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -267,8 +267,8 @@ export default function StartBusinessPage() {
                           <Loader2 className="w-4 h-4 text-[#4F7CFF] animate-spin" />
                         </div>
                         <div>
-                          <p className="text-[#0A121A] text-sm font-bold">{agents[activeStepIndex].name}</p>
-                          <p className="text-[#4F7CFF] text-xs font-medium mt-1 animate-pulse">Working on {agents[activeStepIndex].deliverable}...</p>
+                          <p className="text-[#0A121A] text-sm font-bold">{agents[activeStepIndex]?.name}</p>
+                          <p className="text-[#4F7CFF] text-xs font-medium mt-1 animate-pulse">Working on {agents[activeStepIndex]?.deliverable}...</p>
                         </div>
                       </motion.div>
                     )}
