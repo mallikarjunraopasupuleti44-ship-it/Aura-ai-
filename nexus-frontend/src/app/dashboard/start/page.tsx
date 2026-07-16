@@ -211,7 +211,8 @@ export default function StartBusinessPage() {
           const API_URL = "https://aura-ai-orio.onrender.com";
           const token = localStorage.getItem("aura_token");
           const res = await fetch(`${API_URL}/api/ai/status/${projectId}`, {
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: { "Authorization": `Bearer ${token}` },
+            cache: 'no-store'
           });
           if (res.ok) {
             const data = await res.json();
