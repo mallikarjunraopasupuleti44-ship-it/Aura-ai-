@@ -16,7 +16,11 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'healthy', service: 'Aura AI API' });
+  res.json({ 
+    status: 'healthy', 
+    service: 'Aura AI API',
+    commit: process.env.RENDER_GIT_COMMIT || 'unknown'
+  });
 });
 
 app.use('/api/auth', authRoutes);
