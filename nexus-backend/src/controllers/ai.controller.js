@@ -70,15 +70,134 @@ const runAgents = async (projectId, ideaPrompt) => {
         
         let mockContent = "";
         if (name === 'Planner Agent') {
-          mockContent = "## Business Plan\n\n### Concept\nA modern, scalable business focused on delivering high-quality products to the local market.\n\n### Target Market\n- Demographics: 18-35 years old\n- Interests: Premium quality, convenience, sustainability\n\n### Roadmap\n1. **Month 1:** Brand identity and website launch.\n2. **Month 2:** Local marketing campaign and beta testing.\n3. **Month 3:** Official grand opening and scaling operations.\n\n> This is a fallback generated plan because the Google Gemini API quota was exceeded.";
+          mockContent = `## Business Concept
+
+"The Brew Canvas" is a specialty coffee shop dedicated to offering an elevated coffee experience through meticulously sourced single-origin beans and artisanal brewing methods. We aim to be a vibrant community hub where patrons can savor exceptional coffee, engage in creative pursuits, and connect in an inspiring atmosphere.
+
+## Brand Identity
+**Brand Name:** The Brew Canvas **Tagline:** Where Every Cup is a Masterpiece. **Brand Personality:** Artisanal, inviting, discerning, and community-centric.
+
+## Target Market
+- **Urban Professionals (25-45):** Seeking premium coffee, a sophisticated workspace for remote work, and a calm retreat from city life.
+- **Creative Community & Students (20-35):** Appreciating unique flavors, a vibrant atmosphere for networking or studying, and an alternative to chain coffee shops.
+- **Coffee Connoisseurs:** Dedicated enthusiasts who value ethical sourcing, rare bean varietals, and expertly prepared pour-overs or espresso.
+
+## Competitive Edge
+- **Curated Global Sourcing:** Direct partnerships with ethical farms for exclusive, high-grade single-origin beans, offering unique flavor profiles not found elsewhere locally.
+- **Master Barista Expertise:** Highly trained baristas specializing in advanced brewing techniques (e.g., V60 pour-over, Aeropress, Siphon) and latte art, ensuring consistent, exceptional quality.
+- **Interactive & Artistic Ambiance:** A uniquely designed space promoting creativity and connection, featuring local art installations and dedicated zones for both collaboration and quiet contemplation.
+
+## Revenue Streams
+- In-store coffee and beverage sales (primary)
+- Retail sales of whole bean coffee and brewing equipment
+- Artisanal pastries and light food offerings
+- Private event hosting and coffee tasting workshops`;
         } else if (name === 'Marketing Agent') {
-          mockContent = "## Social Media Campaign\n\n### Instagram Post 1\n**Caption:** We are finally here! Get ready to experience the best quality in town. Drop a 🌟 in the comments if you're excited!\n**Hashtags:** #LaunchDay #PremiumQuality #ComingSoon\n\n### Twitter Thread\n1/ We noticed a huge gap in the market for high-quality, affordable options.\n2/ So we decided to build it ourselves. Launching next week!\n\n> This is a fallback generated campaign because the Google Gemini API quota was exceeded.";
+          mockContent = `## Social Media Strategy
+
+### Phase 1: Teaser Campaign (T-Minus 14 Days)
+**Instagram Post 1:**
+*Image:* A macro shot of perfectly roasted coffee beans falling into a grinder, moody lighting.
+*Caption:* Excellence takes time. We've spent months traveling the globe to find the perfect beans. The countdown begins. ☕️✨ #TheBrewCanvas #SpecialtyCoffee #ComingSoon
+*Hashtags:* #CoffeeLovers #ArtisanCoffee #CafeCulture
+
+**Twitter Thread:**
+1/ Why does most coffee taste the same? Because it's roasted to hide imperfections. We're doing things differently. 
+2/ We're opening a space where coffee is treated like an art form. No burnt beans. No overwhelming syrups. Just pure, unadulterated flavor profiles. 
+3/ Join our mailing list for exclusive early access and tasting event invites. Link in bio!
+
+### Phase 2: Launch Week
+**TikTok Video:**
+*Audio:* Lo-fi hip hop beat.
+*Visual:* A fast-paced montage of a barista dialing in an espresso shot, steaming milk to a silky microfoam, and pouring a perfect swan latte art. Text overlay: "POV: You found your new favorite spot."
+*Caption:* We are OFFICIALLY OPEN! Come say hi and try our signature Ethiopian single-origin pour-over. 🕊️🤎
+
+> *This is a fallback generated campaign because the Google Gemini API quota was exceeded.*`;
         } else if (name === 'Finance Agent') {
-          mockContent = "## Financial Analysis\n\n### Startup Costs\n- **Equipment & Tech:** $15,000\n- **Marketing Budget:** $5,000\n- **Legal & Operations:** $2,500\n- **Total Initial Capital:** $22,500\n\n### Break-Even Analysis\nAssuming an average margin of 45%, break-even will be achieved at 1,200 units sold (approx. Month 4).\n\n### Year 1 Projection\n- **Q1:** -$5,000 (Launch phase)\n- **Q2:** +$8,000 (Growth)\n- **Q3:** +$15,000 (Scaling)\n- **Q4:** +$25,000 (Profitability)\n\n> This is a fallback generated analysis because the Google Gemini API quota was exceeded.";
+          mockContent = `## Financial Projections & Analysis
+
+### Initial Capital Requirements
+- **Leasehold Improvements:** $45,000 (Renovation, bar build-out, seating)
+- **Equipment:** $35,000 (La Marzocco espresso machine, Mahlkönig grinders, batch brewers, refrigeration)
+- **Initial Inventory:** $5,000 (Green coffee, packaging, milks, syrups, food items)
+- **Licenses & Permits:** $2,500
+- **Working Capital (3 Months):** $25,000
+**Total Startup Costs:** $112,500
+
+### Unit Economics (Average Ticket)
+- **Average Customer Spend:** $6.50
+- **Cost of Goods Sold (COGS):** $1.30 (20%)
+- **Gross Profit Margin:** 80%
+
+### Break-Even Analysis
+- **Fixed Monthly Costs:** $8,500 (Rent, utilities, insurance, base labor)
+- **Break-Even Point:** Approx. 1,634 transactions per month (roughly 55 customers per day).
+
+### Year 1 Revenue Projection
+- **Q1:** $45,000 (Soft opening, building local awareness)
+- **Q2:** $65,000 (Ramping up marketing, word of mouth)
+- **Q3:** $85,000 (Established regular customer base)
+- **Q4:** $110,000 (Holiday season gift card and retail bean sales boost)
+
+> *This is a fallback generated analysis because the Google Gemini API quota was exceeded.*`;
         } else if (name === 'Operations Agent') {
-          mockContent = "## Weekly Operations Schedule\n\n### Monday - Wednesday (Production & Sourcing)\n- 08:00 AM: Supplier inventory check\n- 10:00 AM: Quality assurance testing\n- 02:00 PM: Fulfilling early orders\n\n### Thursday - Friday (Marketing & Dispatch)\n- 09:00 AM: Social media scheduling\n- 01:00 PM: Finalizing shipping labels and dispatching packages\n- 04:00 PM: Weekly performance review\n\n### Standard Operating Procedure (SOP)\n1. All suppliers must be verified via our 3-point checklist.\n2. Customer inquiries must be answered within 4 hours.\n\n> This is a fallback generated schedule because the Google Gemini API quota was exceeded.";
+          mockContent = `## Operational Blueprint
+
+### Standard Operating Procedures (SOPs)
+
+#### 1. Opening Checklist (06:00 AM - 07:00 AM)
+- [ ] Dial in espresso: Pull test shots, adjust grind size and yield based on current humidity and bean age. Target: 18g in, 36g out in 28 seconds.
+- [ ] Brew batch coffee (drip).
+- [ ] Calibrate and purge steam wands.
+- [ ] Stock pastry case and organize grab-and-go section.
+- [ ] Perform taste test with the shift team.
+
+#### 2. Mid-Shift Maintenance
+- [ ] Check inventory levels for milk, alternative milks, and cups.
+- [ ] Wipe down espresso machine and purge group heads every 30 minutes.
+- [ ] Sweep lobby area and sanitize high-touch surfaces.
+
+#### 3. Closing Checklist (07:00 PM - 08:00 PM)
+- [ ] Backflush espresso machine group heads with Cafiza.
+- [ ] Empty and wash all hoppers and grinders.
+- [ ] Reconcile cash drawer and run daily Z-report.
+- [ ] Date-check all perishable items and rotate stock (FIFO).
+
+### Supplier Management
+- **Coffee Beans:** Sourced weekly from *Onyx Coffee Lab* and *Sey Coffee*. Orders placed on Tuesdays by 2 PM.
+- **Dairy:** Local farm delivery every Monday and Thursday.
+- **Pastries:** Delivered daily at 5:30 AM by *Artisan Bakers Guild*.
+
+> *This is a fallback generated schedule because the Google Gemini API quota was exceeded.*`;
         } else if (name === 'Website Agent') {
-          mockContent = "## Landing Page Blueprint\n\n### Hero Section\n- **Headline:** Elevate Your Lifestyle Today.\n- **Sub-headline:** The premium solution you've been waiting for is finally here.\n- **CTA Button:** Get Early Access\n\n### Features Section\n1. **Lightning Fast:** Delivered to your door in 24 hours.\n2. **Eco-Friendly:** 100% sustainable materials.\n3. **24/7 Support:** We are always here to help.\n\n### Footer\n- Links: About Us, Contact, Privacy Policy, Terms of Service.\n- Social Links: Instagram, Twitter, LinkedIn.\n\n> This is a fallback generated blueprint because the Google Gemini API quota was exceeded.";
+          mockContent = `## Website Wireframe & Copy
+
+### 1. Hero Section
+**Visual:** Full-screen looping video of a slow-motion pour-over coffee being brewed, steam rising gracefully.
+**Headline:** Elevate Your Daily Ritual.
+**Sub-headline:** Experience specialty coffee sourced with intention and crafted with precision.
+**Primary CTA Button:** View Menu & Order Ahead
+**Secondary CTA Button:** Our Coffee Philosophy
+
+### 2. The 'Our Process' Section
+**Layout:** 3-column grid with minimalist iconography.
+- **Column 1: Ethical Sourcing.** "We pay well above fair-trade minimums to ensure farmers thrive."
+- **Column 2: Precision Roasting.** "Light roasted to highlight the unique terroir of every origin."
+- **Column 3: Masterful Brewing.** "Every cup is weighed, timed, and extracted to perfection."
+
+### 3. E-Commerce / Retail Section
+**Headline:** Bring the Canvas Home.
+**Product Carousel:**
+- *Ethiopia Yirgacheffe (Whole Bean) - $22* - Tasting notes: Jasmine, Blueberry, Bergamot.
+- *Colombia Supremo (Whole Bean) - $19* - Tasting notes: Chocolate, Brown Sugar, Orange.
+- *Hario V60 Starter Kit - $45*
+
+### 4. Footer
+- **Navigation:** Home, Shop, About Us, Wholesale, Contact
+- **Newsletter Signup:** "Join our inner circle for exclusive drops and brewing tips."
+- **Social Proof:** Links to Instagram and TikTok.
+
+> *This is a fallback generated blueprint because the Google Gemini API quota was exceeded.*`;
         }
 
         await prisma.agentTask.update({

@@ -768,69 +768,69 @@ export default function StartBusinessPage() {
             />
             
             <motion.div 
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-2xl bg-white shadow-2xl flex flex-col border-l border-gray-200"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="fixed inset-0 m-auto z-50 w-full max-w-3xl h-[85vh] max-h-[800px] bg-[#0A121A] rounded-2xl shadow-2xl flex flex-col border border-gray-800"
             >
-              <div className="px-6 py-5 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center shrink-0">
-                <div className="flex items-center gap-3">
-                  <button 
-                    onClick={closePanel} 
-                    className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <div>
-                    <h3 className="font-bold text-lg text-gray-900 flex items-center gap-3">
-                      {selectedTask.deliverable}
-                      <span className="text-[10px] bg-green-100 text-green-600 px-2.5 py-0.5 rounded-full uppercase tracking-widest font-bold flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        Ready for Review
-                      </span>
-                    </h3>
-                    <p className="text-xs text-gray-500 mt-0.5">
-                      Produced by {selectedTask.agentName} &bull; {selectedTask.agentRole}
-                    </p>
-                  </div>
+              <div className="px-8 py-6 border-b border-gray-800 flex justify-between items-center shrink-0">
+                <div>
+                  <h3 className="font-bold text-xl text-white flex items-center gap-3">
+                    {selectedTask.deliverable}
+                    <span className="text-[10px] bg-amber-500/20 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider font-semibold">
+                      Awaiting approval
+                    </span>
+                  </h3>
+                  <p className="text-sm text-gray-400 mt-1.5">
+                    Produced by {selectedTask.agentName} ({selectedTask.agentRole})
+                  </p>
                 </div>
                 <button 
                   onClick={closePanel} 
-                  className="p-2 hover:bg-gray-100 rounded-xl text-gray-500 transition-colors"
+                  className="p-2 hover:bg-gray-800 rounded-xl text-gray-400 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8">
-                <div className="prose prose-sm max-w-none prose-headings:text-gray-900 prose-a:text-cyan-600 prose-p:text-gray-700 prose-p:leading-relaxed prose-li:text-gray-700 prose-strong:text-gray-900 prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg prose-h2:border-b prose-h2:pb-2 prose-h2:border-gray-100">
+              <div className="flex-1 overflow-y-auto p-8 custom-scrollbar">
+                <div className="prose prose-sm md:prose-base max-w-none text-gray-300
+                  prose-headings:text-cyan-400 prose-headings:font-semibold
+                  prose-a:text-cyan-400 
+                  prose-p:leading-relaxed prose-p:mb-4
+                  prose-li:text-gray-300 prose-li:marker:text-cyan-500
+                  prose-strong:text-white prose-strong:font-semibold
+                  prose-h1:text-2xl prose-h2:text-lg prose-h3:text-base 
+                  prose-h2:mt-8 prose-h2:mb-4
+                  prose-h3:mt-6 prose-h3:mb-3"
+                >
                   <ReactMarkdown>{selectedTask.content}</ReactMarkdown>
                 </div>
               </div>
 
-              <div className="px-6 py-4 border-t border-gray-100 bg-gradient-to-r from-gray-50 to-white flex justify-between items-center shrink-0">
+              <div className="px-8 py-5 border-t border-gray-800 flex justify-between items-center shrink-0 bg-[#060D13] rounded-b-2xl">
                 <button
                   onClick={copyContent}
-                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 transition-colors font-medium px-3 py-2 rounded-lg hover:bg-gray-100"
+                  className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors font-medium px-3 py-2 rounded-lg hover:bg-gray-800"
                 >
                   {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                   {copied ? "Copied!" : "Copy content"}
                 </button>
-                <div className="flex gap-3">
+                <div className="flex gap-4">
                   <Button 
                     variant="outline" 
                     onClick={closePanel} 
-                    className="rounded-xl border-gray-300 text-gray-700 hover:bg-gray-100 font-medium flex items-center gap-2"
+                    className="rounded-full border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white font-medium flex items-center gap-2 px-6"
                   >
                     <RotateCcw className="w-4 h-4" />
                     Request revision
                   </Button>
                   <Button 
                     onClick={closePanel} 
-                    className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white font-bold shadow-md shadow-green-500/20 px-6 flex items-center gap-2"
+                    className="rounded-full bg-emerald-500 hover:bg-emerald-400 text-[#0A121A] font-bold px-8 flex items-center gap-2"
                   >
-                    <ThumbsUp className="w-4 h-4" />
+                    <CheckCircle2 className="w-4 h-4" />
                     Approve work
                   </Button>
                 </div>
