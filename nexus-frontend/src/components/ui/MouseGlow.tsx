@@ -36,7 +36,7 @@ export function GlobalMouseGlow() {
         translateY: "-50%",
         width: "600px",
         height: "600px",
-        background: "radial-gradient(circle, rgba(79,124,255,0.08) 0%, rgba(123,92,255,0.04) 40%, transparent 70%)",
+        background: "radial-gradient(circle, rgba(255,107,129,0.12) 0%, rgba(188,98,255,0.06) 40%, transparent 70%)",
       }}
     />
   );

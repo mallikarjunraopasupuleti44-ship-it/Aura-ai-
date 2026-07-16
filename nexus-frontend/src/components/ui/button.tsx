@@ -12,9 +12,9 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-[#4F7CFF] text-white shadow-[0_0_20px_rgba(79,124,255,0.4)] hover:shadow-[0_0_40px_rgba(79,124,255,0.6)] hover:bg-[#7B5CFF] border border-white/20 hover:scale-[1.02]",
+        default: "bg-gradient-to-r from-[#FF6B81] via-[#7B5CFF] to-[#2FD9FF] text-white shadow-[0_10px_30px_rgba(123,92,255,0.3)] hover:shadow-[0_15px_40px_rgba(255,107,129,0.4)] border border-white/40 hover:scale-[1.03] bg-[length:200%_auto] hover:bg-[right_center] transition-all duration-500",
         outline:
-          "bg-white/10 backdrop-blur-md border border-white/40 text-[#0A121A] hover:bg-white/30 hover:border-[#2FD9FF]/50 hover:shadow-[0_0_30px_rgba(47,217,255,0.2)] hover:scale-[1.02]",
+          "bg-white/10 backdrop-blur-md text-[#0A121A] border border-[#7B5CFF]/30 hover:border-transparent hover:bg-white/30 hover:shadow-[0_0_30px_rgba(123,92,255,0.2)] hover:scale-[1.02] relative before:absolute before:inset-0 before:-z-10 before:rounded-[inherit] before:bg-gradient-to-r before:from-[#FF6B81] before:via-[#7B5CFF] before:to-[#2FD9FF] before:p-[2px] before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:mask-[linear-gradient(#fff, #fff) content-box, linear-gradient(#fff, #fff)] before:mask-composite-[exclude]",
         secondary:
           "bg-[#7B5CFF]/10 text-[#7B5CFF] hover:bg-[#7B5CFF]/20 border border-[#7B5CFF]/20 hover:scale-[1.02]",
         ghost:
