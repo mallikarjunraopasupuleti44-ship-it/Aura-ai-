@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { 
   Rocket, BrainCircuit, LineChart, Users, Globe, CheckCircle2,
-  FileText, Activity, ChevronRight, Zap, X, Copy, Check, Eye
+  FileText, Activity, ChevronRight, Zap, X, Copy, Check, Eye, Loader2
 } from "lucide-react";
 import ReactMarkdown from 'react-markdown';
 
