@@ -1,6 +1,5 @@
 import { generateText } from "ai";
-import { google } from "@ai-sdk/google";
-import { anthropic } from "@ai-sdk/anthropic";
+import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { openai } from "@ai-sdk/openai";
 import prisma from "@/lib/prisma";
 
@@ -199,13 +198,11 @@ Generate 4 features, 3 testimonials, 3 pricing tiers, and 4 FAQs.`,
 // ═══════════════════════════════════════════════════════════
 
 function getModel() {
-  // Prefer Gemini if key is available, then Anthropic, then OpenAI
+  // Prefer Gemini if key is available, then OpenAI
   const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
   if (geminiKey) {
-    return google("gemini-2.0-flash", { apiKey: geminiKey });
-  }
-  if (process.env.ANTHROPIC_API_KEY) {
-    return anthropic("claude-sonnet-4-20250514");
+    const google = createGoogleGenerativeAI({ apiKey: geminiKey });
+    return google("gemini-2.0-flash");
   }
   if (process.env.OPENAI_API_KEY) {
     return openai("gpt-4o-mini");
