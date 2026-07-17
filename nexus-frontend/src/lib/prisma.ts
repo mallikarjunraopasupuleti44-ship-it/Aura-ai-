@@ -1,9 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 
 const prismaClientSingleton = () => {
-  return new PrismaClient({
-    datasourceUrl: process.env.DATABASE_URL || "file:./dev.db",
-  })
+  return new PrismaClient()
 }
 
 declare global {
