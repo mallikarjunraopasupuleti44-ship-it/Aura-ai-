@@ -52,7 +52,7 @@ router.post('/:id/run-agent', async (req, res) => {
     });
 
     // Execute LLM call
-    const deliverableContent = await executeAgent(agentKey, project.title);
+    const deliverableContent = await executeAgent(agentKey, project.title, project.userId);
 
     // Store deliverable
     const updatedTask = await prisma.agentTask.update({

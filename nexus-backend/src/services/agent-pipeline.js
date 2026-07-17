@@ -136,17 +136,23 @@ function getMockData(agentKey) {
   return JSON.stringify(mocks[agentKey] || mocks.planner);
 }
 
-async function executeAgent(agentKey, businessIdea) {
+const { getBusinessContext } = require('./rag.service');
+
+async function executeAgent(agentKey, businessIdea, userId) {
   const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
   let deliverableContent;
   
+  // Fetch RAG context
+  const context = await getBusinessContext(userId, businessIdea);
+  const enrichedPrompt = `Business idea: "${businessIdea}".\n\nUse the following context to inform your output:\n${context}\n\nGenerate the deliverable now.`;
+
   if (geminiKey) {
     try {
       const google = createGoogleGenerativeAI({ apiKey: geminiKey });
       const result = await generateText({
         model: google("gemini-2.0-flash"),
         system: getSystemPrompt(agentKey),
-        prompt: `Business idea: "${businessIdea}". Generate the deliverable now.`,
+        prompt: enrichedPrompt,
         maxTokens: 2000,
       });
       deliverableContent = result.text;
@@ -159,7 +165,7 @@ async function executeAgent(agentKey, businessIdea) {
       const result = await generateText({
         model: openai("gpt-4o-mini"),
         system: getSystemPrompt(agentKey),
-        prompt: `Business idea: "${businessIdea}". Generate the deliverable now.`,
+        prompt: enrichedPrompt,
         maxTokens: 2000,
       });
       deliverableContent = result.text;
