@@ -1,10 +1,12 @@
 // This is your Prisma schema file
 generator client {
   provider = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
   provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 // NextAuth Models (Simplified for Credentials, but structure supports OAuth later)

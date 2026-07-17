@@ -61,6 +61,8 @@ export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET || "default_secret_for_local_development",
 };
 
+export const dynamic = 'force-dynamic';
+
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

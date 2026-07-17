@@ -4,6 +4,9 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/lib/prisma";
 import fs from "fs/promises";
 import path from "path";
+import { logActivity } from "@/lib/activity";
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {

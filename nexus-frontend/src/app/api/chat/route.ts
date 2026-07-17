@@ -5,6 +5,8 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -66,12 +68,12 @@ You are helping the user build and operate their business.
     }
 
     const result = await streamText({
-      model: openai("gpt-4o"),
+      model: openai("gpt-4o") as any,
       system: systemPrompt,
       messages,
     });
 
-    return result.toDataStreamResponse();
+    return result.toTextStreamResponse();
   } catch (error) {
     console.error("Chat API Error:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
