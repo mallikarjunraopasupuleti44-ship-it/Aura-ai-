@@ -30,10 +30,30 @@ const barData = [
 
 export default function ReportsPage() {
   const [mounted, setMounted] = useState(false);
+  const [stats, setStats] = useState({
+    agentsCount: 0,
+    documentsCount: 0,
+    automationsCount: 0,
+  });
 
   useEffect(() => {
     setMounted(true);
+    fetchStats();
   }, []);
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch("/api/dashboard/stats");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.stats) {
+          setStats(data.stats);
+        }
+      }
+    } catch (err) {
+      console.error("Failed to fetch stats", err);
+    }
+  };
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8 pb-12">
@@ -59,10 +79,10 @@ export default function ReportsPage() {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { label: "Total Revenue Generated", value: "$42,500", trend: "+12.5%", icon: DollarSign, color: "text-[#42D392]", bg: "bg-[#42D392]/10", border: "border-[#42D392]/30" },
-          { label: "Tasks Completed", value: "8,241", trend: "+34.2%", icon: Target, color: "text-[#4F7CFF]", bg: "bg-[#4F7CFF]/10", border: "border-[#4F7CFF]/30" },
-          { label: "Customer Interactions", value: "1,204", trend: "+5.1%", icon: Users, color: "text-[#7B5CFF]", bg: "bg-[#7B5CFF]/10", border: "border-[#7B5CFF]/30" },
-          { label: "AI Accuracy Score", value: "99.2%", trend: "+0.8%", icon: Activity, color: "text-[#2FD9FF]", bg: "bg-[#2FD9FF]/10", border: "border-[#2FD9FF]/30" },
+          { label: "Active AI Agents", value: stats.agentsCount.toString(), trend: "Active", icon: Users, color: "text-[#4F7CFF]", bg: "bg-[#4F7CFF]/10", border: "border-[#4F7CFF]/30" },
+          { label: "Documents Loaded", value: stats.documentsCount.toString(), trend: "Stored", icon: Target, color: "text-[#42D392]", bg: "bg-[#42D392]/10", border: "border-[#42D392]/30" },
+          { label: "Automations Running", value: stats.automationsCount.toString(), trend: "Live", icon: Activity, color: "text-[#7B5CFF]", bg: "bg-[#7B5CFF]/10", border: "border-[#7B5CFF]/30" },
+          { label: "Est. Hours Saved", value: (stats.automationsCount * 14 + stats.agentsCount * 24).toString(), trend: "Saved", icon: TrendingUp, color: "text-[#2FD9FF]", bg: "bg-[#2FD9FF]/10", border: "border-[#2FD9FF]/30" },
         ].map((stat, idx) => {
           const Icon = stat.icon;
           return (

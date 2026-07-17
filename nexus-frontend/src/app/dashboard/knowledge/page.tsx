@@ -37,10 +37,10 @@ export default function KnowledgePage() {
   const folders = ['All', 'Marketing Assets', 'Legal Contracts', 'Product Specs', 'Financials'];
 
   useEffect(() => {
-    if (session) {
+    if (session?.user?.id) {
       fetchDocuments();
     }
-  }, [session]);
+  }, [session?.user?.id]);
 
   const fetchDocuments = async () => {
     try {
@@ -181,7 +181,7 @@ export default function KnowledgePage() {
             <div className="space-y-4">
               <AnimatePresence>
                 {filteredDocs.length === 0 ? (
-                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center">
+                  <motion.div key="empty-state" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-16 text-center">
                     <div className="w-20 h-20 bg-[#0A121A]/5 rounded-3xl flex items-center justify-center mx-auto mb-6">
                       <Search className="w-10 h-10 text-[#0A121A]/30" />
                     </div>

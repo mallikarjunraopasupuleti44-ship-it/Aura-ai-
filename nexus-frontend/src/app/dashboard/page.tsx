@@ -40,7 +40,8 @@ export default function DashboardPage() {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || "there";
+        const meta = user.user_metadata || {};
+        const name = meta.full_name || meta.name || meta.user_name || meta.preferred_username || user.email?.split('@')[0] || "there";
         setUserName(name);
       }
     };

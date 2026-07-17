@@ -46,9 +46,12 @@ export default function ProfilePage() {
         return;
       }
       
-      setUserName(user.user_metadata?.full_name || user.user_metadata?.name || "User");
+      const meta = user.user_metadata || {};
+      const name = meta.full_name || meta.name || meta.user_name || meta.preferred_username || user.email?.split('@')[0] || "User";
+      
+      setUserName(name);
       setUserEmail(user.email || "");
-      setEditName(user.user_metadata?.full_name || user.user_metadata?.name || "User");
+      setEditName(name);
       
       await fetchProfile();
       setIsLoadingProfile(false);
