@@ -197,17 +197,28 @@ export default function StartBusinessPage() {
 
       if (res.ok) {
         const data = await res.json();
-        setProjectId(data.project.id);
+        const pid = data.project.id;
+        setProjectId(pid);
         setProjectTitle(data.project.title);
         setProjectStatus("running");
 
-        // Wait for briefing animation
+        // Wait for briefing animation, then start agents
         setTimeout(() => {
           setShowBriefing(false);
           setIsDeploying(false);
           setActiveTab("Command Center");
-          fetchProjectData(data.project.id);
-          startPolling(data.project.id);
+          fetchProjectData(pid);
+          startPolling(pid);
+
+          // Fire all 5 agents in parallel — each is its own API call
+          const agentKeys = ["planner", "marketing", "finance", "operations", "website"];
+          agentKeys.forEach((agentKey) => {
+            fetch(`/api/projects/${pid}/run-agent`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ agentKey }),
+            }).catch((err) => console.error(`Agent ${agentKey} error:`, err));
+          });
         }, 2500);
       } else {
         setShowBriefing(false);

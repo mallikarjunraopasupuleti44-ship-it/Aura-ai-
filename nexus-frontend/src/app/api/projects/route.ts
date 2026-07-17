@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { AGENT_DEFINITIONS, runAgentPipeline } from "@/lib/agent-pipeline";
+import { AGENT_DEFINITIONS } from "@/lib/agent-pipeline";
 
 export const dynamic = "force-dynamic";
 
@@ -29,7 +29,8 @@ export async function GET() {
   }
 }
 
-// POST /api/projects — create a project + 5 idle tasks, kick off pipeline
+// POST /api/projects — create a project + 5 idle tasks
+// Client will then call /api/projects/[id]/run-agent for each agent
 export async function POST(req: Request) {
   try {
     const supabase = await createClient();
@@ -48,18 +49,18 @@ export async function POST(req: Request) {
       data: {
         userId: user.id,
         title: title.trim(),
-        status: "draft",
+        status: "running",
       },
     });
 
-    // Create 5 idle AgentTask rows
+    // Create 5 queued AgentTask rows
     await Promise.all(
       AGENT_DEFINITIONS.map((agent) =>
         prisma.agentTask.create({
           data: {
             projectId: project.id,
             agentKey: agent.key,
-            status: "idle",
+            status: "queued",
             deliverableType: agent.deliverableType,
           },
         })
@@ -71,11 +72,19 @@ export async function POST(req: Request) {
       data: {
         projectId: project.id,
         agentKey: null,
-        message: "Mission received... Analyzing business goal... Assembling AI workforce",
+        message: `New mission: "${title.trim()}" — Assembling AI workforce...`,
       },
     });
 
-    // Also log to user activity
+    await prisma.projectEvent.create({
+      data: {
+        projectId: project.id,
+        agentKey: null,
+        message: "Orchestrator assigned tasks to 5 agents",
+      },
+    });
+
+    // Log to user activity
     await prisma.activityLog.create({
       data: {
         userId: user.id,
@@ -84,13 +93,7 @@ export async function POST(req: Request) {
       },
     });
 
-    // Kick off the agent pipeline in the background
-    // Using fire-and-forget pattern (works with Vercel Edge/Serverless)
-    runAgentPipeline(project.id, title.trim()).catch((err) => {
-      console.error("Background pipeline error:", err);
-    });
-
-    return NextResponse.json({ project, message: "Project created. AI team deploying..." });
+    return NextResponse.json({ project, message: "Project created. Call /run-agent to start each agent." });
   } catch (error) {
     console.error("POST /api/projects error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
