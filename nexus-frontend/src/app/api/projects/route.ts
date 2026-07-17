@@ -1,9 +1,16 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/utils/supabase/server";
 import prisma from "@/lib/prisma";
-import { AGENT_DEFINITIONS } from "@/lib/agent-pipeline";
 
 export const dynamic = "force-dynamic";
+
+const AGENT_DEFINITIONS = [
+  { key: "planner", deliverableType: "Business Plan" },
+  { key: "marketing", deliverableType: "Social Campaign" },
+  { key: "finance", deliverableType: "Cost Analysis" },
+  { key: "operations", deliverableType: "Weekly Schedule" },
+  { key: "website", deliverableType: "Landing Page" }
+];
 
 // GET /api/projects — list user's projects
 export async function GET() {
