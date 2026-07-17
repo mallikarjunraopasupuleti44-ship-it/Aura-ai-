@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createClient } from "@/utils/supabase/server";
+
 import prisma from "@/lib/prisma";
 import fs from "fs/promises";
 import path from "path";
@@ -12,8 +12,9 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -23,7 +24,7 @@ export async function DELETE(
       where: { id },
     });
 
-    if (!doc || doc.userId !== session.user.id) {
+    if (!doc || doc.userId !== user.id) {
       return NextResponse.json({ error: "Document not found" }, { status: 404 });
     }
 

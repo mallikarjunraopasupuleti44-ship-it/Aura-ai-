@@ -8,16 +8,17 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const supabase = createClient();
   
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [isEditingUser, setIsEditingUser] = useState(false);
   const [editName, setEditName] = useState("");
+  const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   
   // Business Profile State
   const [isSaving, setIsSaving] = useState(false);
@@ -38,15 +39,23 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    } else if (session?.user) {
-      setUserName(session.user.name || "User");
-      setUserEmail(session.user.email || "");
-      setEditName(session.user.name || "User");
-      fetchProfile();
-    }
-  }, [session, status, router]);
+    const loadUserAndProfile = async () => {
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error || !user) {
+        router.push("/login");
+        return;
+      }
+      
+      setUserName(user.user_metadata?.full_name || user.user_metadata?.name || "User");
+      setUserEmail(user.email || "");
+      setEditName(user.user_metadata?.full_name || user.user_metadata?.name || "User");
+      
+      await fetchProfile();
+      setIsLoadingProfile(false);
+    };
+    
+    loadUserAndProfile();
+  }, [router]);
 
   const fetchProfile = async () => {
     try {
@@ -54,10 +63,10 @@ export default function ProfilePage() {
       if (res.ok) {
         const data = await res.json();
         if (data.profile) {
-          setProfile({
-            ...profile,
+          setProfile(prev => ({
+            ...prev,
             ...data.profile,
-          });
+          }));
         }
       }
     } catch (err) {
@@ -65,10 +74,12 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveName = () => {
-    // Ideally this would save to the User table, but for now just update local state
+  const handleSaveName = async () => {
     setUserName(editName);
     setIsEditingUser(false);
+    await supabase.auth.updateUser({
+      data: { full_name: editName }
+    });
   };
 
   const handleSaveBusinessProfile = async () => {
@@ -88,14 +99,14 @@ export default function ProfilePage() {
   };
 
   const handleLogout = async () => {
-    await signOut({ redirect: false });
+    await supabase.auth.signOut();
     localStorage.removeItem("aura_token");
     router.push("/login");
   };
 
   const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2) || 'U';
 
-  if (status === "loading") {
+  if (isLoadingProfile) {
     return <div className="p-8 text-center text-[#0A121A]/50">Loading profile...</div>;
   }
 

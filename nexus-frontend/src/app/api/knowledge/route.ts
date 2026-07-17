@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createClient } from "@/utils/supabase/server";
+
 import prisma from "@/lib/prisma";
 import fs from "fs/promises";
 import path from "path";
@@ -10,13 +10,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const documents = await prisma.knowledgeDocument.findMany({
-      where: { userId: session.user.id },
+      where: { userId: user.id },
       orderBy: { createdAt: "desc" },
     });
 
@@ -29,8 +30,9 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -55,7 +57,7 @@ export async function POST(req: Request) {
     // Save to DB
     const doc = await prisma.knowledgeDocument.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,
         filename: file.name,
         fileType: file.name.split('.').pop() || "unknown",
         fileUrl: `/uploads/${filename}`,
@@ -68,7 +70,7 @@ export async function POST(req: Request) {
 
     await prisma.activityLog.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,
         actionType: "KNOWLEDGE_UPLOAD",
         description: `Uploaded document: ${file.name} to ${folder}`,
       }

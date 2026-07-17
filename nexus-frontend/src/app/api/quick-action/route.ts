@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createClient } from "@/utils/supabase/server";
+
 import prisma from "@/lib/prisma";
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -21,7 +22,7 @@ export async function POST(req: Request) {
     // Log Activity
     await prisma.activityLog.create({
       data: {
-        userId: session.user.id,
+        userId: user.id,
         actionType: "QUICK_ACTION",
         description: `Executed Quick Action: ${actionTitle}`,
       }

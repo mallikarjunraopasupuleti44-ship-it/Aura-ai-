@@ -1,26 +1,27 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { createClient } from "@/utils/supabase/server";
+
 import prisma from "@/lib/prisma";
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+    const dbUser = await prisma.user.findUnique({
+      where: { id: user.id },
       select: { settings: true },
     });
 
     let settings = {};
-    if (user?.settings) {
+    if (dbUser?.settings) {
       try {
-        settings = JSON.parse(user.settings);
+        settings = JSON.parse(dbUser.settings);
       } catch (e) {}
     }
 
@@ -33,15 +34,16 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const settingsData = await req.json();
 
-    const user = await prisma.user.update({
-      where: { id: session.user.id },
+    const dbUser = await prisma.user.update({
+      where: { id: user.id },
       data: {
         settings: JSON.stringify(settingsData),
       },

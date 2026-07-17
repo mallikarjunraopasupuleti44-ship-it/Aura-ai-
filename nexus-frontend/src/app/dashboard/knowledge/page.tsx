@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { BookOpen, Upload, FileText, Folder, Search, MoreVertical, Database, Trash2, Download, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useSession } from "next-auth/react";
+import { createClient } from "@/utils/supabase/client";
+
 
 interface Document {
   id: string;
@@ -19,7 +20,13 @@ interface Document {
 }
 
 export default function KnowledgePage() {
-  const { data: session } = useSession();
+  const [session, setSession] = useState<{user?: {id?: string}}>({});
+  const supabase = createClient();
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) setSession({ user: { id: user.id } });
+    });
+  }, []);
   const [documents, setDocuments] = useState<Document[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFolder, setActiveFolder] = useState<string>("All");

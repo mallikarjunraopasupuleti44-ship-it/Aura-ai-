@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Mail, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react";
+import { createClient } from "@/utils/supabase/client";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -16,6 +16,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const supabase = createClient();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,34 +24,46 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const res = await fetch(`/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      });
-      
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || "Signup failed");
-      }
-
-      // Automatically sign in after successful registration
-      const result = await signIn("credentials", {
-        redirect: false,
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
       });
 
-      if (result?.error) {
-        throw new Error(result.error);
+      if (error) {
+        throw error;
+      }
+      
+      // If email confirmation is required, handle it here
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        setError("This email is already in use.");
+        return;
       }
 
       router.push("/dashboard");
+      router.refresh();
     } catch (err: any) {
       setError(err.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
@@ -95,7 +108,7 @@ export default function SignupPage() {
           <h1 className="text-4xl font-bold text-[#0A121A] mb-2 tracking-tight">Create an account</h1>
           <p className="text-[#0A121A]/60 mb-8 text-lg">Enter your details to get started.</p>
 
-          <Button variant="outline" className="w-full h-14 rounded-xl mb-4 font-medium text-[#0A121A] bg-white/60 backdrop-blur-md hover:bg-white/80 border-white/60 shadow-sm transition-all text-base">
+          <Button onClick={handleGoogleSignup} variant="outline" className="w-full h-14 rounded-xl mb-4 font-medium text-[#0A121A] bg-white/60 backdrop-blur-md hover:bg-white/80 border-white/60 shadow-sm transition-all text-base">
             <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
