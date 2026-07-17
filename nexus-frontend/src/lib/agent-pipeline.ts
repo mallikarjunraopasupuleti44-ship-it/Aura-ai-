@@ -200,8 +200,9 @@ Generate 4 features, 3 testimonials, 3 pricing tiers, and 4 FAQs.`,
 
 function getModel() {
   // Prefer Gemini if key is available, then Anthropic, then OpenAI
-  if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    return google("gemini-2.0-flash");
+  const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
+  if (geminiKey) {
+    return google("gemini-2.0-flash", { apiKey: geminiKey });
   }
   if (process.env.ANTHROPIC_API_KEY) {
     return anthropic("claude-sonnet-4-20250514");
