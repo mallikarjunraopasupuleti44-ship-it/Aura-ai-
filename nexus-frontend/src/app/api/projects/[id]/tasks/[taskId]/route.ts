@@ -43,7 +43,9 @@ export async function POST(
         data: { status: "approved" },
       });
 
-      const agentName = task.agentKey.charAt(0).toUpperCase() + task.agentKey.slice(1) + " Agent";
+      const agentName = task.agentKey 
+        ? task.agentKey.charAt(0).toUpperCase() + task.agentKey.slice(1) + " Agent"
+        : "Agent";
 
       await prisma.projectEvent.create({
         data: {
