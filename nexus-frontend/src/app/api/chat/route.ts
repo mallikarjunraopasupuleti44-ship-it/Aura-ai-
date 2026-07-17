@@ -51,20 +51,9 @@ You are helping the user build and operate their business.
     // Call OpenAI via Vercel AI SDK
     // If OPENAI_API_KEY is not set, this will throw.
     if (!process.env.OPENAI_API_KEY) {
-      // Mock response for local development if no key is present
-      const mockStream = new ReadableStream({
-        async start(controller) {
-          const text = "Hi! This is a mock response from the backend because OPENAI_API_KEY is not set in the environment. Your business profile and knowledge base were successfully loaded in the backend context!";
-          const encoder = new TextEncoder();
-          for (let i = 0; i < text.length; i++) {
-            controller.enqueue(encoder.encode(`0:${JSON.stringify(text[i])}\n`));
-            await new Promise((resolve) => setTimeout(resolve, 20));
-          }
-          controller.close();
-        },
-      });
-      return new Response(mockStream, {
-        headers: { "Content-Type": "text/plain; charset=utf-8" },
+      return new NextResponse(JSON.stringify({ error: "Missing API Key. Please configure OPENAI_API_KEY." }), { 
+        status: 500, 
+        headers: { "Content-Type": "application/json" } 
       });
     }
 
