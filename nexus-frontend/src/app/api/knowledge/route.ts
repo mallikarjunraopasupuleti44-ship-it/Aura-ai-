@@ -4,7 +4,7 @@ import { embedMany } from "ai";
 import { openai } from "@ai-sdk/openai";
 import prisma from "@/lib/prisma";
 import { logActivity } from "@/lib/activity";
-import pdfParse from "pdf-parse";
+const pdfParse = require("pdf-parse");
 import { supabase as supabaseAdmin } from "@/lib/supabase"; // Uses Anon Key but works for public buckets
 
 export const dynamic = 'force-dynamic';
