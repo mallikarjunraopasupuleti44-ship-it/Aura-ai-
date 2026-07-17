@@ -210,10 +210,11 @@ export default function StartBusinessPage() {
           fetchProjectData(pid);
           startPolling(pid);
 
-          // Fire all 5 agents in parallel — each is its own API call
+          // Fire all 5 agents in parallel — each is its own API call to the Render backend
+          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:8000";
           const agentKeys = ["planner", "marketing", "finance", "operations", "website"];
           agentKeys.forEach((agentKey) => {
-            fetch(`/api/projects/${pid}/run-agent`, {
+            fetch(`${backendUrl}/api/projects/${pid}/run-agent`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ agentKey }),

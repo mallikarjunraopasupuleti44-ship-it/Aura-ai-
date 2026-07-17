@@ -1,17 +1,17 @@
-import { NextResponse } from "next/server";
-import { createClient } from "@/utils/supabase/server";
-import prisma from "@/lib/prisma";
-import { AGENT_DEFINITIONS } from "@/lib/agent-pipeline";
-import { generateText } from "ai";
-import { createGoogleGenerativeAI } from "@ai-sdk/google";
-import { openai } from "@ai-sdk/openai";
+const { generateText } = require("ai");
+const { createGoogleGenerativeAI } = require("@ai-sdk/google");
+const { openai } = require("@ai-sdk/openai");
 
-export const dynamic = "force-dynamic";
-export const maxDuration = 60; // Allow up to 60s on Vercel Pro, 10s on Hobby
+const AGENT_DEFINITIONS = [
+  { key: "planner", displayName: "Planner Agent", deliverableType: "Business Plan" },
+  { key: "marketing", displayName: "Marketing Agent", deliverableType: "Social Campaign" },
+  { key: "finance", displayName: "Finance Agent", deliverableType: "Cost Analysis" },
+  { key: "operations", displayName: "Operations Agent", deliverableType: "Operations Manual" },
+  { key: "website", displayName: "Website Agent", deliverableType: "Landing Page" },
+];
 
-// System prompts for each agent
-function getSystemPrompt(agentKey: string): string {
-  const prompts: Record<string, string> = {
+function getSystemPrompt(agentKey) {
+  const prompts = {
     planner: `You are an expert business strategist. Given a business idea, produce a comprehensive, structured business plan. Respond ONLY with valid JSON (no markdown, no code fences).
 Output format: { "businessConcept": "2-3 sentence summary", "brandIdentity": { "suggestedName": "string", "tagline": "string", "personality": "string" }, "targetMarket": "2-3 sentences", "competitiveEdge": "2-3 unique differentiators", "revenueStreams": ["stream1", "stream2", "stream3"], "launchRoadmap": [{ "phase": "Phase 1: Foundation", "weeks": "Week 1-3", "actions": ["action1", "action2"] }, { "phase": "Phase 2: Build", "weeks": "Week 4-6", "actions": ["action1", "action2"] }, { "phase": "Phase 3: Launch", "weeks": "Week 7-9", "actions": ["action1", "action2"] }, { "phase": "Phase 4: Growth", "weeks": "Week 10-12", "actions": ["action1", "action2"] }], "successMetrics": ["metric1", "metric2", "metric3"] }`,
 
@@ -30,9 +30,8 @@ Output format: { "hero": { "headline": "headline", "subheadline": "1-2 sentences
   return prompts[agentKey] || prompts.planner;
 }
 
-// Mock data fallback
-function getMockData(agentKey: string): string {
-  const mocks: Record<string, object> = {
+function getMockData(agentKey) {
+  const mocks = {
     planner: {
       businessConcept: "A modern business combining premium quality with community-driven growth and AI-powered personalization.",
       brandIdentity: { suggestedName: "AuraVenture", tagline: "Build Something Beautiful", personality: "Bold, Innovative, Community-driven" },
@@ -137,123 +136,46 @@ function getMockData(agentKey: string): string {
   return JSON.stringify(mocks[agentKey] || mocks.planner);
 }
 
-// POST /api/projects/[id]/run-agent — runs ONE agent, called by client for each agent
-export async function POST(
-  req: Request,
-  { params }: { params: Promise<{ id: string }> }
-) {
-  try {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const { id } = await params;
-    const { agentKey } = await req.json();
-
-    if (!agentKey) {
-      return NextResponse.json({ error: "agentKey is required" }, { status: 400 });
-    }
-
-    // Verify project
-    const project = await prisma.project.findFirst({
-      where: { id, userId: user.id },
-    });
-    if (!project) {
-      return NextResponse.json({ error: "Project not found" }, { status: 404 });
-    }
-
-    // Find the task
-    const task = await prisma.agentTask.findFirst({
-      where: { projectId: id, agentKey },
-    });
-    if (!task) {
-      return NextResponse.json({ error: "Task not found" }, { status: 404 });
-    }
-
-    // Skip if already completed
-    if (task.status === "needs_review" || task.status === "approved") {
-      return NextResponse.json({ message: "Already completed", task });
-    }
-
-    const agentDef = AGENT_DEFINITIONS.find((a) => a.key === agentKey)!;
-
-    // Mark as working
-    await prisma.agentTask.update({
-      where: { id: task.id },
-      data: { status: "working", startedAt: new Date() },
-    });
-
-    await prisma.projectEvent.create({
-      data: { projectId: id, agentKey, message: `${agentDef.displayName} started working on ${agentDef.deliverableType}` },
-    });
-
-    // Try LLM call
-    let deliverableContent: string;
-    const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
-
-    if (geminiKey) {
-      try {
-        const google = createGoogleGenerativeAI({ apiKey: geminiKey });
-        const result = await generateText({
-          model: google("gemini-2.0-flash") as any,
-          system: getSystemPrompt(agentKey),
-          prompt: `Business idea: "${project.title}". Generate the deliverable now.`,
-          maxTokens: 2000,
-        });
-        deliverableContent = result.text;
-      } catch (err) {
-        console.error(`LLM error for ${agentKey}:`, err);
-        deliverableContent = getMockData(agentKey);
-      }
-    } else if (process.env.OPENAI_API_KEY) {
-      try {
-        const result = await generateText({
-          model: openai("gpt-4o-mini") as any,
-          system: getSystemPrompt(agentKey),
-          prompt: `Business idea: "${project.title}". Generate the deliverable now.`,
-          maxTokens: 2000,
-        });
-        deliverableContent = result.text;
-      } catch (err) {
-        console.error(`LLM error for ${agentKey}:`, err);
-        deliverableContent = getMockData(agentKey);
-      }
-    } else {
-      // No API key — use mock data
+async function executeAgent(agentKey, businessIdea) {
+  const geminiKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY;
+  let deliverableContent;
+  
+  if (geminiKey) {
+    try {
+      const google = createGoogleGenerativeAI({ apiKey: geminiKey });
+      const result = await generateText({
+        model: google("gemini-2.0-flash"),
+        system: getSystemPrompt(agentKey),
+        prompt: `Business idea: "${businessIdea}". Generate the deliverable now.`,
+        maxTokens: 2000,
+      });
+      deliverableContent = result.text;
+    } catch (err) {
+      console.error(`LLM error for ${agentKey}:`, err);
       deliverableContent = getMockData(agentKey);
     }
-
-    // Store deliverable
-    const updatedTask = await prisma.agentTask.update({
-      where: { id: task.id },
-      data: {
-        status: "needs_review",
-        deliverableType: agentDef.deliverableType,
-        deliverableContent,
-        completedAt: new Date(),
-      },
-    });
-
-    await prisma.projectEvent.create({
-      data: { projectId: id, agentKey, message: `${agentDef.displayName} finished — ${agentDef.deliverableType} ready for review ✅` },
-    });
-
-    // Check if all tasks are done
-    const allTasks = await prisma.agentTask.findMany({ where: { projectId: id } });
-    const allDone = allTasks.every((t) => t.status === "needs_review" || t.status === "approved");
-
-    if (allDone) {
-      await prisma.project.update({ where: { id }, data: { status: "completed" } });
-      await prisma.projectEvent.create({
-        data: { projectId: id, agentKey: null, message: "All agents completed their deliverables 🎉" },
+  } else if (process.env.OPENAI_API_KEY) {
+    try {
+      const result = await generateText({
+        model: openai("gpt-4o-mini"),
+        system: getSystemPrompt(agentKey),
+        prompt: `Business idea: "${businessIdea}". Generate the deliverable now.`,
+        maxTokens: 2000,
       });
+      deliverableContent = result.text;
+    } catch (err) {
+      console.error(`LLM error for ${agentKey}:`, err);
+      deliverableContent = getMockData(agentKey);
     }
-
-    return NextResponse.json({ task: updatedTask, message: "Agent completed" });
-  } catch (error) {
-    console.error("POST /api/projects/[id]/run-agent error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } else {
+    // No API key — use mock data
+    deliverableContent = getMockData(agentKey);
   }
+
+  return deliverableContent;
 }
+
+module.exports = {
+  AGENT_DEFINITIONS,
+  executeAgent,
+};
