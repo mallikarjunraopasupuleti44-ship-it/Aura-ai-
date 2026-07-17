@@ -142,7 +142,7 @@ model Project {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String   @default("Untitled Project")
+  title     String?  @default("Untitled Project")
   status    String   @default("draft") // draft | running | completed
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -155,7 +155,7 @@ model AgentTask {
   id                 String    @id @default(cuid())
   projectId          String
   project            Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  agentKey           String    @default("planner") // planner | marketing | finance | operations | website
+  agentKey           String?   @default("planner") // planner | marketing | finance | operations | website
   status             String    @default("idle") // idle | queued | working | needs_review | approved
   deliverableType    String?   // e.g. "Business Plan", "Social Campaign"
   deliverableContent String?
