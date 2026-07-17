@@ -10,6 +10,7 @@ import {
   FileText, Megaphone, TrendingUp, Search, UploadCloud, PieChart, Headphones,
   Mail, Edit3, Settings, Loader2
 } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -20,6 +21,7 @@ function getGreeting(): string {
 }
 
 export default function DashboardPage() {
+  const supabase = createClient();
   const [userName, setUserName] = useState("there");
   const [greeting, setGreeting] = useState("Welcome");
   const [activeWorkflow, setActiveWorkflow] = useState<string | null>(null);
@@ -35,20 +37,14 @@ export default function DashboardPage() {
   useEffect(() => {
     setGreeting(getGreeting());
 
-    const storedName = localStorage.getItem("aura_user_name");
-    if (storedName) {
-      setUserName(storedName);
-    } else {
-      const token = localStorage.getItem("aura_token");
-      if (token) {
-        try {
-          const payload = JSON.parse(atob(token.split('.')[1]));
-          if (payload.name) {
-            setUserName(payload.name);
-          }
-        } catch (e) {}
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const name = user.user_metadata?.full_name || user.user_metadata?.name || user.email?.split('@')[0] || "there";
+        setUserName(name);
       }
-    }
+    };
+    fetchUser();
 
     // Fetch real stats
     const fetchStats = async () => {
