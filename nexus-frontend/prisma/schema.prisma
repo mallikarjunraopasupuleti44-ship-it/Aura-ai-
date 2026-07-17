@@ -2,11 +2,13 @@
 generator client {
   provider = "prisma-client-js"
   engineType = "library"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  extensions = [vector]
 }
 
 // NextAuth Models (Simplified for Credentials, but structure supports OAuth later)
@@ -23,10 +25,12 @@ model User {
   // App Models
   businessProfile BusinessProfile?
   knowledge       KnowledgeDocument[]
+  knowledgeChunks KnowledgeChunk[]
   agents          HiredAgent[]
   history         ActivityLog[]
   automations     AutomationWorkflow[]
   projects        Project[]
+  reports         Report[]
 }
 
 model BusinessProfile {
@@ -69,8 +73,22 @@ model KnowledgeDocument {
   status      String   @default("PROCESSING") // PROCESSING, READY, ERROR
   extractedText String? // Will store extracted knowledge
 
+  chunks      KnowledgeChunk[]
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model KnowledgeChunk {
+  id          String             @id @default(cuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  documentId  String?
+  document    KnowledgeDocument? @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  content     String
+  embedding   Unsupported("vector(1536)")?
+  
+  createdAt   DateTime @default(now())
 }
 
 model HiredAgent {
@@ -124,7 +142,7 @@ model Project {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  title     String
+  title     String   @default("Untitled Project")
   status    String   @default("draft") // draft | running | completed
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -137,7 +155,7 @@ model AgentTask {
   id                 String    @id @default(cuid())
   projectId          String
   project            Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  agentKey           String    // planner | marketing | finance | operations | website
+  agentKey           String    @default("planner") // planner | marketing | finance | operations | website
   status             String    @default("idle") // idle | queued | working | needs_review | approved
   deliverableType    String?   // e.g. "Business Plan", "Social Campaign"
   deliverableContent String?
@@ -154,5 +172,16 @@ model ProjectEvent {
   agentKey  String?  // null = orchestrator
   message   String
   createdAt DateTime @default(now())
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  type        String   // e.g., "Revenue", "Marketing", "Business Health"
+  data        String   // JSON string of report data (e.g. chart points)
+  
+  createdAt   DateTime @default(now())
 }
 
