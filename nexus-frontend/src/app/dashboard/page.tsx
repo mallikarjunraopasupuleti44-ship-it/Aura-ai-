@@ -25,6 +25,13 @@ export default function DashboardPage() {
   const [activeWorkflow, setActiveWorkflow] = useState<string | null>(null);
   const [workflowProgress, setWorkflowProgress] = useState(0);
 
+  const [stats, setStats] = useState({
+    agentsCount: 0,
+    documentsCount: 0,
+    automationsCount: 0,
+    hasBusinessProfile: false,
+  });
+
   useEffect(() => {
     setGreeting(getGreeting());
 
@@ -42,13 +49,42 @@ export default function DashboardPage() {
         } catch (e) {}
       }
     }
+
+    // Fetch real stats
+    const fetchStats = async () => {
+      try {
+        const res = await fetch("/api/dashboard/stats");
+        if (res.ok) {
+          const data = await res.json();
+          setStats({
+            agentsCount: data.stats.agentsCount,
+            documentsCount: data.stats.documentsCount,
+            automationsCount: data.stats.automationsCount,
+            hasBusinessProfile: !!data.profile?.businessName,
+          });
+        }
+      } catch (err) {
+        console.error("Failed to fetch dashboard stats", err);
+      }
+    };
+    fetchStats();
   }, []);
 
   // Simulate an AI workflow when a quick action is clicked
-  const handleWorkflowStart = (title: string) => {
+  const handleWorkflowStart = async (title: string) => {
     setActiveWorkflow(title);
     setWorkflowProgress(0);
     
+    try {
+      await fetch("/api/quick-action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ actionTitle: title })
+      });
+    } catch (e) {
+      console.error(e);
+    }
+
     let progress = 0;
     const interval = setInterval(() => {
       progress += Math.floor(Math.random() * 15) + 5;
@@ -64,10 +100,10 @@ export default function DashboardPage() {
   };
 
   const statusBadges = [
-    { label: "Business Ready", icon: CheckCircle2, color: "text-[#42D392]" },
-    { label: "Knowledge Loaded", icon: Database, color: "text-[#4F7CFF]" },
-    { label: "Agents Active", icon: Bot, color: "text-[#7B5CFF]" },
-    { label: "Automation Ready", icon: Zap, color: "text-[#F7B955]" },
+    { label: stats.hasBusinessProfile ? "Business Ready" : "Missing Profile", icon: CheckCircle2, color: stats.hasBusinessProfile ? "text-[#42D392]" : "text-[#0A121A]/30" },
+    { label: `${stats.documentsCount} Docs Loaded`, icon: Database, color: stats.documentsCount > 0 ? "text-[#4F7CFF]" : "text-[#0A121A]/30" },
+    { label: `${stats.agentsCount} Agents Active`, icon: Bot, color: stats.agentsCount > 0 ? "text-[#7B5CFF]" : "text-[#0A121A]/30" },
+    { label: `${stats.automationsCount} Automations`, icon: Zap, color: stats.automationsCount > 0 ? "text-[#F7B955]" : "text-[#0A121A]/30" },
     { label: "Secure Workspace", icon: ShieldCheck, color: "text-[#2FD9FF]" },
   ];
 

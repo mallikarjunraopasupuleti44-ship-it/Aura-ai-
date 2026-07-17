@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Mail, User } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -22,8 +23,7 @@ export default function SignupPage() {
     setIsLoading(true);
 
     try {
-      const API_URL = "https://aura-ai-orio.onrender.com";
-      const res = await fetch(`${API_URL}/api/auth/register`, {
+      const res = await fetch(`/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name, email, password })
@@ -35,9 +35,17 @@ export default function SignupPage() {
         throw new Error(data.error || "Signup failed");
       }
 
-      localStorage.setItem("aura_token", data.token);
-      if (data.user?.name) localStorage.setItem("aura_user_name", data.user.name);
-      if (data.user?.email) localStorage.setItem("aura_user_email", data.user.email);
+      // Automatically sign in after successful registration
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);

@@ -1,0 +1,114 @@
+// This is your Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+// NextAuth Models (Simplified for Credentials, but structure supports OAuth later)
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  passwordHash  String?
+  image         String?
+  settings      String?   // JSON string of user settings
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // App Models
+  businessProfile BusinessProfile?
+  knowledge       KnowledgeDocument[]
+  agents          HiredAgent[]
+  history         ActivityLog[]
+  automations     AutomationWorkflow[]
+}
+
+model BusinessProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  businessName    String?
+  industry        String?
+  country         String?
+  businessType    String?
+  employees       String?
+  products        String?
+  services        String?
+  targetAudience  String?
+  mission         String?
+  vision          String?
+  revenueModel    String?
+  brandColors     String?
+  logoUrl         String?
+  website         String?
+  socialMedia     String?
+  goals           String?
+  challenges      String?
+  competitors     String?
+
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model KnowledgeDocument {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  filename    String
+  fileType    String   // PDF, DOCX, CSV, URL
+  fileUrl     String   // Local path or cloud URL
+  sizeBytes   Int      @default(0)
+  status      String   @default("PROCESSING") // PROCESSING, READY, ERROR
+  extractedText String? // Will store extracted knowledge
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model HiredAgent {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  agentId     String   // e.g., "planner", "marketing"
+  name        String
+  role        String
+  status      String   @default("ACTIVE") // ACTIVE, PAUSED
+  config      String?  // JSON string of specific configurations
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  actionType  String   // e.g., "KNOWLEDGE_UPLOADED", "AGENT_HIRED"
+  description String
+  agentId     String?  // If action was performed by/for a specific agent
+  status      String   @default("SUCCESS")
+
+  createdAt   DateTime @default(now())
+}
+
+model AutomationWorkflow {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  name        String
+  trigger     String
+  action      String
+  integration String
+  status      String   @default("ACTIVE")
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

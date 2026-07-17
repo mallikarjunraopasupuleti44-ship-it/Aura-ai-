@@ -67,26 +67,49 @@ export default function SettingsPage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("aura_settings");
-    if (stored) {
+    const fetchSettings = async () => {
       try {
-        setSettings(JSON.parse(stored));
-      } catch {}
-    }
+        const res = await fetch("/api/settings");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.settings && Object.keys(data.settings).length > 0) {
+            setSettings(data.settings);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to fetch settings", err);
+      }
+    };
+    fetchSettings();
   }, []);
 
-  const toggleSetting = (key: keyof typeof settings) => {
-    setSettings(prev => {
-      const updated = { ...prev, [key]: !prev[key] };
-      localStorage.setItem("aura_settings", JSON.stringify(updated));
-      return updated;
-    });
+  const toggleSetting = async (key: keyof typeof settings) => {
+    const updated = { ...settings, [key]: !settings[key] };
+    setSettings(updated);
+    // Optimistic save
+    try {
+      await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updated),
+      });
+    } catch (e) {}
   };
 
-  const handleSave = () => {
-    localStorage.setItem("aura_settings", JSON.stringify(settings));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  const handleSave = async () => {
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (

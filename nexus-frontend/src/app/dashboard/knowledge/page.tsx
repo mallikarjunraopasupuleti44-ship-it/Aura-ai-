@@ -1,26 +1,60 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { BookOpen, Upload, FileText, Folder, Search, MoreVertical, Database, Trash2, Download, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSession } from "next-auth/react";
+
+interface Document {
+  id: string;
+  name: string;
+  type: string;
+  size: string;
+  date: string;
+  folder: string;
+  url: string;
+}
 
 export default function KnowledgePage() {
-  const [documents, setDocuments] = useState([
-    { id: 1, name: "Company_Brand_Guidelines.pdf", type: "pdf", size: "2.4 MB", date: "Today, 10:00 AM", folder: "Marketing Assets" },
-    { id: 2, name: "Q3_Financial_Report.xlsx", type: "sheet", size: "1.1 MB", date: "Yesterday, 2:30 PM", folder: "Financials" },
-    { id: 3, name: "Product_Roadmap_2026.docx", type: "doc", size: "840 KB", date: "Jul 12, 2026", folder: "Product Specs" },
-  ]);
-
+  const { data: session } = useSession();
+  const [documents, setDocuments] = useState<Document[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFolder, setActiveFolder] = useState<string>("All");
   const [isUploading, setIsUploading] = useState(false);
-  const [activeMenu, setActiveMenu] = useState<number | null>(null);
+  const [activeMenu, setActiveMenu] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const folders = ['All', 'Marketing Assets', 'Legal Contracts', 'Product Specs', 'Financials'];
+
+  useEffect(() => {
+    if (session) {
+      fetchDocuments();
+    }
+  }, [session]);
+
+  const fetchDocuments = async () => {
+    try {
+      const res = await fetch("/api/knowledge");
+      if (res.ok) {
+        const data = await res.json();
+        const formattedDocs = data.documents.map((doc: any) => ({
+          id: doc.id,
+          name: doc.filename,
+          type: doc.fileType,
+          size: (doc.sizeBytes / (1024 * 1024)).toFixed(2) + " MB",
+          date: new Date(doc.createdAt).toLocaleDateString(),
+          folder: doc.extractedText || "Marketing Assets",
+          url: doc.fileUrl,
+        }));
+        setDocuments(formattedDocs);
+      }
+    } catch (error) {
+      console.error("Failed to fetch documents", error);
+    }
+  };
 
   const filteredDocs = documents.filter(doc => 
     doc.name.toLowerCase().includes(searchQuery.toLowerCase()) && 
@@ -31,38 +65,51 @@ export default function KnowledgePage() {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
       setIsUploading(true);
       
-      // Simulate network upload
-      setTimeout(() => {
-        const newDoc = {
-          id: Date.now(),
-          name: file.name,
-          type: file.name.split('.').pop() || "unknown",
-          size: (file.size / (1024 * 1024)).toFixed(2) + " MB",
-          date: "Just now",
-          folder: activeFolder === 'All' ? "Marketing Assets" : activeFolder
-        };
-        setDocuments(prev => [newDoc, ...prev]);
-        setIsUploading(false);
-      }, 1500);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("folder", activeFolder === 'All' ? "Marketing Assets" : activeFolder);
 
-      // Reset the input value so the same file can be uploaded multiple times
-      e.target.value = '';
+      try {
+        const res = await fetch("/api/knowledge", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (res.ok) {
+          await fetchDocuments();
+        } else {
+          console.error("Upload failed");
+        }
+      } catch (error) {
+        console.error("Upload error", error);
+      } finally {
+        setIsUploading(false);
+        e.target.value = ''; // Reset input
+      }
     }
   };
 
-  const deleteDoc = (id: number) => {
-    setDocuments(prev => prev.filter(d => d.id !== id));
-    setActiveMenu(null);
+  const deleteDoc = async (id: string) => {
+    try {
+      const res = await fetch(`/api/knowledge/${id}`, { method: "DELETE" });
+      if (res.ok) {
+        setDocuments(prev => prev.filter(d => d.id !== id));
+      }
+    } catch (error) {
+      console.error("Delete error", error);
+    } finally {
+      setActiveMenu(null);
+    }
   };
 
-  // Calculate fake storage based on docs
-  const totalBaseMB = 24.5;
-  const currentTotalMB = (totalBaseMB + (documents.length - 3) * 1.5).toFixed(1);
+  // Calculate actual storage based on docs
+  const totalMB = documents.reduce((acc, doc) => acc + parseFloat(doc.size), 0);
+  const currentTotalMB = (totalMB).toFixed(1);
 
   return (
     <div className="max-w-[1400px] mx-auto space-y-8 pb-12" onClick={() => setActiveMenu(null)}>
@@ -140,7 +187,7 @@ export default function KnowledgePage() {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ delay: 0.05 * idx }}
+                      transition={{ delay: 0.05 * Math.min(idx, 10) }}
                       layout
                       className="group relative flex items-center justify-between p-5 rounded-2xl border border-white/60 bg-white/40 hover:bg-white hover:shadow-[0_10px_30px_rgba(79,124,255,0.08)] hover:border-[#4F7CFF]/30 transition-all cursor-pointer"
                     >
@@ -175,9 +222,9 @@ export default function KnowledgePage() {
                               exit={{ opacity: 0, scale: 0.95, y: -10 }}
                               className="absolute right-0 top-full mt-2 w-48 bg-white/90 backdrop-blur-md border border-white/60 shadow-[0_20px_60px_rgba(0,0,0,0.15)] rounded-2xl py-2 z-20 overflow-hidden"
                             >
-                              <button className="w-full px-5 py-3 text-left text-sm font-bold text-[#0A121A]/70 hover:bg-[#4F7CFF]/10 hover:text-[#4F7CFF] flex items-center gap-3 transition-colors">
+                              <a href={doc.url} download className="w-full px-5 py-3 text-left text-sm font-bold text-[#0A121A]/70 hover:bg-[#4F7CFF]/10 hover:text-[#4F7CFF] flex items-center gap-3 transition-colors">
                                 <Download className="w-4 h-4" /> Download
-                              </button>
+                              </a>
                               <div className="h-px bg-[#0A121A]/5 my-1" />
                               <button 
                                 onClick={(e) => { e.stopPropagation(); deleteDoc(doc.id); }}
@@ -206,17 +253,17 @@ export default function KnowledgePage() {
             </h3>
             <div className="space-y-3">
               <div className="flex justify-between text-base font-bold text-[#0A121A]">
-                <span>{currentTotalMB} GB</span>
+                <span>{currentTotalMB} MB</span>
                 <span className="text-[#0A121A]/40">100 GB</span>
               </div>
               <div className="h-3 bg-[#0A121A]/5 rounded-full overflow-hidden border border-white/40">
                 <div 
                   className="h-full bg-gradient-to-r from-[#4F7CFF] to-[#7B5CFF] rounded-full transition-all duration-1000" 
-                  style={{ width: `${(parseFloat(currentTotalMB) / 100) * 100}%` }}
+                  style={{ width: `${(parseFloat(currentTotalMB) / (100 * 1024)) * 100}%` }}
                 />
               </div>
               <p className="text-sm text-[#0A121A]/50 font-medium pt-3 leading-relaxed">
-                Your AI agents have access to <strong className="text-[#4F7CFF] bg-[#4F7CFF]/10 px-2 py-0.5 rounded">{1201 + documents.length}</strong> documents.
+                Your AI agents have access to <strong className="text-[#4F7CFF] bg-[#4F7CFF]/10 px-2 py-0.5 rounded">{documents.length}</strong> documents.
               </p>
             </div>
           </GlassCard>

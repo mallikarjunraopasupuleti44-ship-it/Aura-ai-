@@ -67,21 +67,30 @@ export default function HistoryPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simulate Database Fetch from localStorage
+  // Fetch from DB
   useEffect(() => {
-    const fetchDB = () => {
+    const fetchDB = async () => {
       try {
-        const stored = localStorage.getItem("aura_history_db");
-        if (stored) {
-          setEvents(JSON.parse(stored));
-        } else {
-          localStorage.setItem("aura_history_db", JSON.stringify(defaultSeed));
-          setEvents(defaultSeed);
+        const res = await fetch("/api/history");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.logs) {
+            const formatted = data.logs.map((log: any) => ({
+              id: log.id,
+              agent: "System", // Or derive from actionType if we added an agent field
+              action: log.actionType.replace(/_/g, " "),
+              detail: log.description,
+              timestamp: new Date(log.createdAt).getTime(),
+              type: log.actionType.toLowerCase().includes("upload") ? "upload" : 
+                    log.actionType.toLowerCase().includes("team") ? "report" : "system"
+            }));
+            setEvents(formatted);
+          }
         }
       } catch (e) {
-        setEvents(defaultSeed);
+        console.error(e);
       } finally {
-        setTimeout(() => setIsLoading(false), 600); // Simulate network delay
+        setIsLoading(false);
       }
     };
     fetchDB();

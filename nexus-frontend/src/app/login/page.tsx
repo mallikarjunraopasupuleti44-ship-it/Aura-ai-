@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { ArrowLeft, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,22 +22,16 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const API_URL = "https://aura-ai-orio.onrender.com";
-      const res = await fetch(`${API_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
       });
       
-      const data = await res.json();
-      
-      if (!res.ok) {
-        throw new Error(data.error || "Login failed");
+      if (result?.error) {
+        throw new Error(result.error);
       }
 
-      localStorage.setItem("aura_token", data.token);
-      if (data.user?.name) localStorage.setItem("aura_user_name", data.user.name);
-      if (data.user?.email) localStorage.setItem("aura_user_email", data.user.email);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);

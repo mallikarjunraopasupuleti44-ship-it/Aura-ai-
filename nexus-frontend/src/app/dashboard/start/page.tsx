@@ -31,12 +31,40 @@ export default function StartBusinessPage() {
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
   const [activeTab, setActiveTab] = useState("Command Center");
 
-  const handleDeploy = () => {
-    if (!prompt.trim() || isDeploying) return;
+  useEffect(() => {
+    const fetchAgents = async () => {
+      try {
+        const res = await fetch("/api/agents");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.agents && data.agents.length > 0) {
+            // If agents are already hired, mark them as completed
+            setCompletedSteps([0, 1, 2, 3, 4]);
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchAgents();
+  }, []);
+
+  const handleDeploy = async () => {
+    if (!prompt.trim() || isDeploying || completedSteps.length > 0) return;
     
     setIsDeploying(true);
     setActiveStepIndex(0);
     setCompletedSteps([]);
+
+    try {
+      await fetch("/api/agents/hire", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+    } catch (e) {
+      console.error(e);
+    }
     
     let currentStep = 0;
     const runNextStep = () => {

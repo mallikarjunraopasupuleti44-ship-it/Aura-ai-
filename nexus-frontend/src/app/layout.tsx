@@ -14,6 +14,8 @@ export const metadata: Metadata = {
 
 import { GlobalMouseGlow } from "@/components/ui/MouseGlow";
 
+import { AuthProvider } from "@/components/providers/AuthProvider";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,7 +28,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col selection:bg-[#4F7CFF]/20 selection:text-[#4F7CFF]">
         <GlobalMouseGlow />
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
